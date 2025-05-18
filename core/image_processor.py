@@ -15,6 +15,9 @@ class ImageProcessor:
         self.image = None
         self.original_image = None
         self.processed_image = None
+        self.undo_stack = []
+        self.redo_stack = []
+        self.max_stack_size = 10  # Maximum number of images to store in undo/redo stack
 
     def load_image(self, file_path):
         """
@@ -74,7 +77,7 @@ class ImageProcessor:
         Returns:
         numpy.ndarray: Current image
         """
-        return self.image
+        return self.image    
 
     def set_image(self, image):
         """
@@ -83,7 +86,54 @@ class ImageProcessor:
         Parameters:
         image (numpy.ndarray): Image to set as current
         """
+        if self.image is not None:
+            # Store current image for undo
+            self.undo_stack.append(self.image.copy())
+            if len(self.undo_stack) > self.max_stack_size:
+                self.undo_stack.pop(0)  # Remove oldest image if stack is full
+            
+            # Clear redo stack when setting a new image
+            self.redo_stack.clear()
+            
         self.image = image
+        
+    def undo(self):
+        """
+        Undo the last image processing operation
+        
+        Returns:
+        numpy.ndarray: Previous image, or None if undo is not possible
+        """
+        if not self.undo_stack:
+            return None
+            
+        # Store current image for redo
+        self.redo_stack.append(self.image.copy())
+        
+        # Pop last image from undo stack
+        previous_image = self.undo_stack.pop()
+        self.image = previous_image
+        
+        return previous_image
+        
+    def redo(self):
+        """
+        Redo the last undone operation
+        
+        Returns:
+        numpy.ndarray: Next image, or None if redo is not possible
+        """
+        if not self.redo_stack:
+            return None
+            
+        # Store current image for undo
+        self.undo_stack.append(self.image.copy())
+        
+        # Pop from redo stack
+        next_image = self.redo_stack.pop()
+        self.image = next_image
+        
+        return next_image
         
     def to_grayscale(self, image=None):
         """

@@ -6,13 +6,15 @@ import cv2
 import numpy as np
 from ..basic.operations import grayscale, binarize
 
-def to_binary(image, threshold=127):
+def to_binary(image, threshold=127, use_adaptive=False, use_otsu=False):
     """
     Convert an image to binary
     
     Parameters:
     image (numpy.ndarray): Input image
     threshold (int): Threshold value (0-255)
+    use_adaptive (bool): Whether to use adaptive thresholding
+    use_otsu (bool): Whether to use Otsu's method for thresholding
     
     Returns:
     numpy.ndarray: Binary image
@@ -23,8 +25,21 @@ def to_binary(image, threshold=127):
     else:
         gray_image = image.copy()
     
-    # Apply threshold
-    _, binary_image = binarize(gray_image, threshold)
+    # Check if image might be inverted (more white than black)
+    white_count = cv2.countNonZero(gray_image)
+    total_pixels = gray_image.shape[0] * gray_image.shape[1]
+    
+    # Apply thresholding based on parameters
+    if use_otsu:
+        # Otsu's method automatically determines optimal threshold
+        _, binary_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    elif use_adaptive:
+        # Adaptive thresholding for images with varying lighting
+        binary_image = cv2.adaptiveThreshold(gray_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+                                           cv2.THRESH_BINARY, 11, 2)
+    else:
+        # Standard binary thresholding
+        binary_image = binarize(gray_image, threshold)
     
     return binary_image
 
@@ -128,8 +143,28 @@ def skeletonize(image):
     Returns:
     numpy.ndarray: Skeletonized image
     """
-    # Convert to binary if needed
-    binary_image = to_binary(image)
+    # Convert to grayscale if needed
+    if len(image.shape) == 3:
+        gray_image = grayscale(image)
+    else:
+        gray_image = image.copy()
+    
+    # Check if image is inverted (more white than black)
+    white_count = cv2.countNonZero(gray_image)
+    total_pixels = gray_image.shape[0] * gray_image.shape[1]
+    
+    # If image is mostly white (>90%), it might be inverted, so invert it
+    if white_count > 0.9 * total_pixels:
+        gray_image = cv2.bitwise_not(gray_image)
+    
+    # Apply threshold with OTSU to better separate foreground and background
+    _, binary_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    
+    # Check if binary image is all white or all black
+    non_zero = cv2.countNonZero(binary_image)
+    if non_zero == 0 or non_zero == total_pixels:
+        # If all white or all black, we can't skeletonize
+        return binary_image
     
     # Initialize skeleton image
     skeleton = np.zeros(binary_image.shape, np.uint8)
@@ -140,10 +175,20 @@ def skeletonize(image):
     # Copy input image
     img = binary_image.copy()
     
+    # Set maximum iterations to prevent infinite loop
+    max_iterations = 1000
+    iter_count = 0
+    
     # Iterative process for skeletonization
-    while True:
+    while iter_count < max_iterations:
         # Step 1: Erode the image
         eroded = cv2.erode(img, kernel)
+        
+        # Check if erosion had any effect
+        if cv2.countNonZero(eroded) == cv2.countNonZero(img):
+            # If erosion doesn't change anything in 2 consecutive iterations, break
+            if iter_count > 0:
+                break
         
         # Step 2: Dilate the eroded image
         temp = cv2.dilate(eroded, kernel)
@@ -160,5 +205,7 @@ def skeletonize(image):
         # Step 6: Check if there are any white pixels left
         if cv2.countNonZero(img) == 0:
             break
+            
+        iter_count += 1
     
     return skeleton

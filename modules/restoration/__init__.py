@@ -1,0 +1,3 @@
+"""
+Restoration module initialization
+"""

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
+    <width>1090</width>
     <height>732</height>
    </rect>
   </property>
@@ -17,7 +17,11 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Aplikasi Pengolahan Citra</string>
+   <string>RestoraPix</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../assets/Icon RestoraPix/1.png</normaloff>../assets/Icon RestoraPix/1.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(40, 44, 52); color: white;</string>
@@ -237,7 +241,7 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>996</width>
+     <width>1090</width>
      <height>26</height>
     </rect>
    </property>
@@ -652,6 +656,30 @@ QMenu::item:selected {
     <addaction name="menuH2_Local_Adaptive_otsu_Thresholding"/>
     <addaction name="actionH3_Contour"/>
    </widget>
+   <widget class="QMenu" name="menuRestoration">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Restoration</string>
+    </property>
+    <addaction name="actionInpainting"/>
+    <addaction name="actionDeblurring"/>
+    <addaction name="actionOld_Photo_Restoration"/>
+   </widget>
    <addaction name="menuImageProcessing"/>
    <addaction name="menuHistogram"/>
    <addaction name="menuOperasi_Geometri"/>
@@ -662,11 +690,73 @@ QMenu::item:selected {
    <addaction name="menufile_deteksi"/>
    <addaction name="menuMorfology"/>
    <addaction name="menuSegmentasi_Citra"/>
+   <addaction name="menuRestoration"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="styleSheet">
     <string notr="true">background-color: rgb(35, 39, 47); color: white;</string>
    </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QToolBar {
+    background-color: rgb(30, 34, 42);
+    spacing: 6px;
+    border: none;
+}
+QToolButton {
+    background-color: transparent;
+    border-radius: 4px;
+    padding: 4px;
+}
+QToolButton:hover {
+    background-color: rgba(61, 174, 233, 0.2);
+}
+QToolButton:pressed {
+    background-color: rgba(61, 174, 233, 0.3);
+}</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+   <addaction name="actionReset"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoom_In"/>
+   <addaction name="actionZoom_Out"/>
+   <addaction name="separator"/>
+   <addaction name="actionCrop"/>
+   <addaction name="separator"/>
+   <addaction name="actionGrayscale"/>
+   <addaction name="actionHistogram"/>
   </widget>
   <action name="actionoperasi_pencerahan">
    <property name="text">
@@ -934,6 +1024,158 @@ QMenu::item:selected {
   <action name="actionH3_Contour">
    <property name="text">
     <string>H3 - Contour</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/1.png</normaloff>../assets/Icon RestoraPix/1.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Image File</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/6.png</normaloff>../assets/Icon RestoraPix/6.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Image</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/3.png</normaloff>../assets/Icon RestoraPix/3.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo Last Action</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/4.png</normaloff>../assets/Icon RestoraPix/4.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo Last Action</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/10.jpg</normaloff>../assets/Icon RestoraPix/10.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset Image to Original</string>
+   </property>
+  </action>
+  <action name="actionZoom_In">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/7.png</normaloff>../assets/Icon RestoraPix/7.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/8.png</normaloff>../assets/Icon RestoraPix/8.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionCrop">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/5.png</normaloff>../assets/Icon RestoraPix/5.png</iconset>
+   </property>
+   <property name="text">
+    <string>Crop</string>
+   </property>
+   <property name="toolTip">
+    <string>Crop Image</string>
+   </property>
+  </action>
+  <action name="actionGrayscale">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/9.png</normaloff>../assets/Icon RestoraPix/9.png</iconset>
+   </property>
+   <property name="text">
+    <string>Grayscale</string>
+   </property>
+   <property name="toolTip">
+    <string>Convert to Grayscale</string>
+   </property>
+  </action>
+  <action name="actionHistogram">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/2.png</normaloff>../assets/Icon RestoraPix/2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Histogram</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Histogram</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionInpainting">
+   <property name="text">
+    <string>Inpainting</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove scratches or defects</string>
+   </property>
+  </action>
+  <action name="actionDeblurring">
+   <property name="text">
+    <string>Deblurring</string>
+   </property>
+   <property name="toolTip">
+    <string>Sharpen blurry images</string>
+   </property>
+  </action>
+  <action name="actionOld_Photo_Restoration">
+   <property name="text">
+    <string>Old Photo Restoration</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore old or damaged photos</string>
    </property>
   </action>
  </widget>
