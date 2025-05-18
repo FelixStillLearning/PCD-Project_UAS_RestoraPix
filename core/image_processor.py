@@ -134,25 +134,3 @@ class ImageProcessor:
         self.image = next_image
         
         return next_image
-        
-    def to_grayscale(self, image=None):
-        """
-        Convert image to grayscale
-        
-        Parameters:
-        image (numpy.ndarray, optional): Input image. If None, use self.image
-        
-        Returns:
-        numpy.ndarray: Grayscale image
-        """
-        if image is None:
-            image = self.image
-            
-        if image is None:
-            return None
-            
-        # Return image if already grayscale
-        if len(image.shape) == 2:
-            return image
-            
-        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
