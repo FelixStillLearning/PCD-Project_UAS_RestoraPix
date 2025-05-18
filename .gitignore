@@ -1,0 +1,51 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Local testing and development files
+.coverage
+htmlcov/
+.pytest_cache/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Qt artifacts
+*.qmlc
+*.jsc
+
+# Image files that might be too large
+*.tiff
+*.tif
+*.psd
+*.raw
+
+# Other potential files
+*.log
+*.sqlite
+*.db

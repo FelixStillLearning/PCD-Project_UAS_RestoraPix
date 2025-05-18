@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>996</width>
+    <height>732</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Segoe UI</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Aplikasi Pengolahan Citra</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(40, 44, 52); color: white;</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="imglabel">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>380</width>
+      <height>360</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(30, 30, 30); border-radius: 10px; border: 2px solid rgb(61, 174, 233);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="loadButton">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>440</y>
+      <width>180</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(61, 174, 233);
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(72, 185, 244);
+}
+QPushButton:pressed {
+    background-color: rgb(50, 153, 211);
+}</string>
+    </property>
+    <property name="text">
+     <string>Load Image</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="prosesbutton">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>440</y>
+      <width>180</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(46, 204, 113);
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(55, 213, 123);
+}
+QPushButton:pressed {
+    background-color: rgb(39, 174, 96);
+}</string>
+    </property>
+    <property name="text">
+     <string>Proses Citra</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="imglabelgray">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>60</y>
+      <width>380</width>
+      <height>360</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(30, 30, 30); border-radius: 10px; border: 2px solid rgb(46, 204, 113);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>30</y>
+      <width>110</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(61, 174, 233); background-color: transparent;</string>
+    </property>
+    <property name="text">
+     <string>INPUT</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>30</y>
+      <width>110</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(46, 204, 113); background-color: transparent;</string>
+    </property>
+    <property name="text">
+     <string>OUTPUT</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="resetbutton">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>500</y>
+      <width>180</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(243, 156, 18);
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 168, 23);
+}
+QPushButton:pressed {
+    background-color: rgb(230, 145, 12);
+}</string>
+    </property>
+    <property name="text">
+     <string>Reset</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="savebutton">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>550</y>
+      <width>180</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(155, 89, 182);
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(165, 105, 190);
+}
+QPushButton:pressed {
+    background-color: rgb(142, 68, 173);
+}</string>
+    </property>
+    <property name="text">
+     <string>Save</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>996</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar {
+    background-color: rgb(40, 44, 52);
+    color: white;
+    border-bottom: 1px solid rgb(60, 63, 65);
+}
+QMenuBar::item {
+    padding: 5px 10px;
+    margin-right: 2px;
+    border-radius: 4px;
+}
+QMenuBar::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+   </property>
+   <widget class="QMenu" name="menuImageProcessing">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Operasi Titik</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionoperasi_pencerahan"/>
+    <addaction name="actionOperasi_Kontras"/>
+    <addaction name="actionOperasi_Kontras_Stretching"/>
+    <addaction name="actionNegative_Image"/>
+    <addaction name="actionBiner_Image"/>
+   </widget>
+   <widget class="QMenu" name="menuHistogram">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Histogram</string>
+    </property>
+    <addaction name="actionHistogram_Grayscale"/>
+    <addaction name="actionHistogram_RGB"/>
+    <addaction name="actionHistogram_Equalization"/>
+   </widget>
+   <widget class="QMenu" name="menuOperasi_Geometri">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Operasi Geometri</string>
+    </property>
+    <widget class="QMenu" name="menuRotasi">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Rotasi</string>
+     </property>
+     <addaction name="action90_Derajat"/>
+     <addaction name="action_90_Derajat"/>
+     <addaction name="action45_Derajat"/>
+     <addaction name="action_45_Derajat"/>
+     <addaction name="action180_Derajat"/>
+    </widget>
+    <widget class="QMenu" name="menuResize">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Resize</string>
+     </property>
+     <widget class="QMenu" name="menuZoom_in">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+      </property>
+      <property name="title">
+       <string>Zoom in</string>
+      </property>
+      <addaction name="action2x"/>
+      <addaction name="action3x"/>
+      <addaction name="action4x"/>
+     </widget>
+     <widget class="QMenu" name="menuZoom_out">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+      </property>
+      <property name="title">
+       <string>Zoom out</string>
+      </property>
+      <addaction name="action1_2"/>
+      <addaction name="action1_4"/>
+      <addaction name="action3_4"/>
+     </widget>
+     <addaction name="menuZoom_in"/>
+     <addaction name="menuZoom_out"/>
+     <addaction name="actionSkewed"/>
+    </widget>
+    <addaction name="actiontranslasi"/>
+    <addaction name="menuRotasi"/>
+    <addaction name="actionTranspose"/>
+    <addaction name="menuResize"/>
+    <addaction name="actionCrop"/>
+   </widget>
+   <widget class="QMenu" name="menuOperasi_Aritmatika">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Operasi Aritmatika</string>
+    </property>
+    <addaction name="actionTambah_dan_Kurang"/>
+    <addaction name="actionKali_dan_Bagi"/>
+   </widget>
+   <widget class="QMenu" name="menuOperasi_Boolean">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Operasi Boolean</string>
+    </property>
+    <addaction name="actionOperasi_AND"/>
+    <addaction name="actionOperasi_OR"/>
+    <addaction name="actionOperasi_XOR"/>
+   </widget>
+   <widget class="QMenu" name="menuOperasi_Spacial">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Operasi Spacial</string>
+    </property>
+    <addaction name="actionFiltering"/>
+    <addaction name="actionSharpening"/>
+    <addaction name="actionMedian_Filter"/>
+    <addaction name="actionMax_Filter"/>
+    <addaction name="actionMin_Filter"/>
+   </widget>
+   <widget class="QMenu" name="menuOperasi_Frekuensi">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Transformasi</string>
+    </property>
+    <addaction name="actionDFT_Smoothing_Image"/>
+    <addaction name="actionDFT_Edge_Detection"/>
+   </widget>
+   <widget class="QMenu" name="menufile_deteksi">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Deteksi tepi</string>
+    </property>
+    <addaction name="actionSobel"/>
+    <addaction name="actionPrewitt"/>
+    <addaction name="actionRobert"/>
+    <addaction name="actionCanny"/>
+   </widget>
+   <widget class="QMenu" name="menuMorfology">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Morfology</string>
+    </property>
+    <addaction name="actionDilasi"/>
+    <addaction name="actionErosi"/>
+    <addaction name="actionopening"/>
+    <addaction name="actionClosing"/>
+    <addaction name="actionSkeletonizing"/>
+   </widget>
+   <widget class="QMenu" name="menuSegmentasi_Citra">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Segmentasi Citra</string>
+    </property>
+    <widget class="QMenu" name="menuH1_Global_Thresholding">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>H1 - Global Thresholding</string>
+     </property>
+     <addaction name="actionBinary_Thresholding"/>
+     <addaction name="actionBinary_Inv_Thresholding"/>
+     <addaction name="actionTrunc_Thresholding"/>
+     <addaction name="actionToZero_Thresholding"/>
+     <addaction name="actionToZero_Inv_Thresholding"/>
+    </widget>
+    <widget class="QMenu" name="menuH2_Local_Adaptive_otsu_Thresholding">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>H2 - Local/Adaptive otsu Thresholding</string>
+     </property>
+     <addaction name="actionMean_Thresholding"/>
+     <addaction name="actionGaussian_Thresholding"/>
+     <addaction name="actionOtsu_Thresholding"/>
+    </widget>
+    <addaction name="menuH1_Global_Thresholding"/>
+    <addaction name="menuH2_Local_Adaptive_otsu_Thresholding"/>
+    <addaction name="actionH3_Contour"/>
+   </widget>
+   <addaction name="menuImageProcessing"/>
+   <addaction name="menuHistogram"/>
+   <addaction name="menuOperasi_Geometri"/>
+   <addaction name="menuOperasi_Aritmatika"/>
+   <addaction name="menuOperasi_Boolean"/>
+   <addaction name="menuOperasi_Spacial"/>
+   <addaction name="menuOperasi_Frekuensi"/>
+   <addaction name="menufile_deteksi"/>
+   <addaction name="menuMorfology"/>
+   <addaction name="menuSegmentasi_Citra"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(35, 39, 47); color: white;</string>
+   </property>
+  </widget>
+  <action name="actionoperasi_pencerahan">
+   <property name="text">
+    <string>Operasi Pencerahan</string>
+   </property>
+  </action>
+  <action name="actionOperasi_Kontras">
+   <property name="text">
+    <string>Operasi Kontras</string>
+   </property>
+  </action>
+  <action name="actionOperasi_Kontras_Stretching">
+   <property name="text">
+    <string>Operasi Kontras Stretching</string>
+   </property>
+  </action>
+  <action name="actionNegative_Image">
+   <property name="text">
+    <string>Negative Image</string>
+   </property>
+  </action>
+  <action name="actionBiner_Image">
+   <property name="text">
+    <string>Biner Image</string>
+   </property>
+  </action>
+  <action name="actionHistogram_Grayscale">
+   <property name="text">
+    <string>Histogram Grayscale</string>
+   </property>
+  </action>
+  <action name="actionHistogram_RGB">
+   <property name="text">
+    <string>Histogram RGB</string>
+   </property>
+  </action>
+  <action name="actionHistogram_Equalization">
+   <property name="text">
+    <string>Histogram Equalization</string>
+   </property>
+  </action>
+  <action name="actiontranslasi">
+   <property name="text">
+    <string>translasi</string>
+   </property>
+  </action>
+  <action name="action90_Derajat">
+   <property name="text">
+    <string>90 Derajat</string>
+   </property>
+  </action>
+  <action name="action_90_Derajat">
+   <property name="text">
+    <string>-90 Derajat</string>
+   </property>
+  </action>
+  <action name="action45_Derajat">
+   <property name="text">
+    <string>45 Derajat</string>
+   </property>
+  </action>
+  <action name="action_45_Derajat">
+   <property name="text">
+    <string>-45 Derajat</string>
+   </property>
+  </action>
+  <action name="action180_Derajat">
+   <property name="text">
+    <string>180 Derajat</string>
+   </property>
+  </action>
+  <action name="actionTranspose">
+   <property name="text">
+    <string>Transpose</string>
+   </property>
+  </action>
+  <action name="actionSkewed">
+   <property name="text">
+    <string>Skewed</string>
+   </property>
+  </action>
+  <action name="action2x">
+   <property name="text">
+    <string>2x</string>
+   </property>
+  </action>
+  <action name="action3x">
+   <property name="text">
+    <string>3x</string>
+   </property>
+  </action>
+  <action name="action4x">
+   <property name="text">
+    <string>4x</string>
+   </property>
+  </action>
+  <action name="action1_2">
+   <property name="text">
+    <string>1/2</string>
+   </property>
+  </action>
+  <action name="action1_4">
+   <property name="text">
+    <string>1/4</string>
+   </property>
+  </action>
+  <action name="action3_4">
+   <property name="text">
+    <string>3/4</string>
+   </property>
+  </action>
+  <action name="actionCrop">
+   <property name="text">
+    <string>Crop</string>
+   </property>
+  </action>
+  <action name="actionTambah_dan_Kurang">
+   <property name="text">
+    <string>Tambah dan Kurang</string>
+   </property>
+  </action>
+  <action name="actionKali_dan_Bagi">
+   <property name="text">
+    <string>Kali dan Bagi</string>
+   </property>
+  </action>
+  <action name="actionOperasi_AND">
+   <property name="text">
+    <string>OPerasi AND</string>
+   </property>
+  </action>
+  <action name="actionOperasi_OR">
+   <property name="text">
+    <string>Operasi OR</string>
+   </property>
+  </action>
+  <action name="actionOperasi_XOR">
+   <property name="text">
+    <string>Operasi XOR</string>
+   </property>
+  </action>
+  <action name="actionFiltering">
+   <property name="text">
+    <string>Filtering</string>
+   </property>
+  </action>
+  <action name="actionSharpening">
+   <property name="text">
+    <string>Sharpening</string>
+   </property>
+  </action>
+  <action name="actionMedian_Filter">
+   <property name="text">
+    <string>Median Filter</string>
+   </property>
+  </action>
+  <action name="actionMax_Filter">
+   <property name="text">
+    <string>Max Filter</string>
+   </property>
+  </action>
+  <action name="actionMin_Filter">
+   <property name="text">
+    <string>Min Filter</string>
+   </property>
+  </action>
+  <action name="actionDFT_Smoothing_Image">
+   <property name="text">
+    <string>DFT Smoothing Image</string>
+   </property>
+  </action>
+  <action name="actionDFT_Edge_Detection">
+   <property name="text">
+    <string>DFT Edge Detection</string>
+   </property>
+   <property name="toolTip">
+    <string>DFT Edge Detection</string>
+   </property>
+  </action>
+  <action name="actionSobel">
+   <property name="text">
+    <string>Sobel</string>
+   </property>
+  </action>
+  <action name="actionPrewitt">
+   <property name="text">
+    <string>Prewitt</string>
+   </property>
+  </action>
+  <action name="actionRobert">
+   <property name="text">
+    <string>Robert</string>
+   </property>
+  </action>
+  <action name="actionCanny">
+   <property name="text">
+    <string>Canny</string>
+   </property>
+  </action>
+  <action name="actionDilasi">
+   <property name="text">
+    <string>Dilasi</string>
+   </property>
+  </action>
+  <action name="actionErosi">
+   <property name="text">
+    <string>Erosi</string>
+   </property>
+  </action>
+  <action name="actionopening">
+   <property name="text">
+    <string>opening</string>
+   </property>
+  </action>
+  <action name="actionClosing">
+   <property name="text">
+    <string>Closing</string>
+   </property>
+  </action>
+  <action name="actionSkeletonizing">
+   <property name="text">
+    <string>Skeletonizing</string>
+   </property>
+  </action>
+  <action name="actionBinary_Thresholding">
+   <property name="text">
+    <string>Binary Thresholding</string>
+   </property>
+  </action>
+  <action name="actionBinary_Inv_Thresholding">
+   <property name="text">
+    <string>Binary Inv Thresholding</string>
+   </property>
+  </action>
+  <action name="actionTrunc_Thresholding">
+   <property name="text">
+    <string>Trunc Thresholding</string>
+   </property>
+  </action>
+  <action name="actionToZero_Thresholding">
+   <property name="text">
+    <string>ToZero Thresholding</string>
+   </property>
+  </action>
+  <action name="actionToZero_Inv_Thresholding">
+   <property name="text">
+    <string>ToZero Inv Thresholding</string>
+   </property>
+  </action>
+  <action name="actionMean_Thresholding">
+   <property name="text">
+    <string>Mean Thresholding</string>
+   </property>
+  </action>
+  <action name="actionGaussian_Thresholding">
+   <property name="text">
+    <string>Gaussian Thresholding</string>
+   </property>
+  </action>
+  <action name="actionOtsu_Thresholding">
+   <property name="text">
+    <string>Otsu Thresholding</string>
+   </property>
+  </action>
+  <action name="actionH3_Contour">
+   <property name="text">
+    <string>H3 - Contour</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
