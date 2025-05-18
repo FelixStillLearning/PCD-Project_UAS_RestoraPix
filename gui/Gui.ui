@@ -869,6 +869,10 @@ QToolButton:pressed {
    </property>
   </action>
   <action name="actionCrop">
+   <property name="icon">
+    <iconset>
+     <normaloff>../assets/Icon RestoraPix/5.png</normaloff>../assets/Icon RestoraPix/5.png</iconset>
+   </property>
    <property name="text">
     <string>Crop</string>
    </property>
@@ -1109,12 +1113,10 @@ QToolButton:pressed {
    <property name="toolTip">
     <string>Zoom Out</string>
    </property>
-  </action>
-  <action name="actionCrop">
+  </action>  <action name="actionCrop">
    <property name="enabled">
     <bool>true</bool>
-   </property>
-   <property name="icon">
+   </property>   <property name="icon">
     <iconset>
      <normaloff>../assets/Icon RestoraPix/5.png</normaloff>../assets/Icon RestoraPix/5.png</iconset>
    </property>

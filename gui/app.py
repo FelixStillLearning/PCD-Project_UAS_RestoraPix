@@ -1825,6 +1825,6 @@ class ImageProcessingApp(QMainWindow):
 def run():
     app = QtWidgets.QApplication(sys.argv)
     window = ImageProcessingApp()
-    window.setWindowTitle('Image Processing')
+    window.setWindowTitle('RestoraPix')
     window.show()
     sys.exit(app.exec_())
