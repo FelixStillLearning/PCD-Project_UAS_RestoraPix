@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../assets/Icon RestoraPix/1.png</normaloff>../assets/Icon RestoraPix/1.png</iconset>
+    <normaloff>../assets/Icon RestoraPix/logo.png</normaloff>../assets/Icon RestoraPix/logo.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(40, 44, 52); color: white;</string>
