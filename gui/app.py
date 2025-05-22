@@ -85,6 +85,9 @@ from modules.object_detection.detector import (
     detect_objects, detect_objects_from_camera, detect_objects_from_video
 )
 
+# Import color processing module
+from modules.color_processing import color_picker, color_tracking, color_analyzer
+
 class ImageProcessingApp(QMainWindow):
     """
     Main application class for the image processing GUI
@@ -196,6 +199,14 @@ class ImageProcessingApp(QMainWindow):
         self.actionExport.triggered.connect(self.export_pixel_data)
 
         # Color Processing
+        self.actionColor_Picker = QAction(self.apply_color_picker)
+        self.actionColor_Tracking = QAction(self.apply_color_tracking)
+    
+        
+        # Connect color processing actions to functions
+        self.actionColor_Picker.triggered.connect(self.apply_color_picker)
+        self.actionColor_Tracking.triggered.connect(self.apply_color_tracking)
+        self.actionColor_Analyzer.triggered.connect(self.apply_color_analyzer)
         
         # Object detection
         self.actionDeteksi_Objek_Gambar.triggered.connect(self.apply_object_detection_image)
@@ -1493,7 +1504,7 @@ class ImageProcessingApp(QMainWindow):
         image = self.processor.get_image()
         if image is None:
             return
-                
+    
         # Apply to-zero threshold
         thresholded_image = tozero_threshold(image)
             
@@ -1942,6 +1953,16 @@ class ImageProcessingApp(QMainWindow):
                 
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error during object detection: {str(e)}")
+    
+    # Color Processing methods
+    def apply_color_picker(self):
+        """Apply color picker tool to identify HSV color values"""
+        color_picker()
+    
+    def apply_color_tracking(self):
+        """Apply color tracking tool to track specific colors"""
+        color_tracking()
+    
 
 def run():
     app = QtWidgets.QApplication(sys.argv)

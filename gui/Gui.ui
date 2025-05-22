@@ -784,6 +784,8 @@ QMenu::item:selected {
      <property name="title">
       <string>Color Processing</string>
      </property>
+     <addaction name="actionColor_Tracking"/>
+     <addaction name="actionColor_Picker"/>
     </widget>
     <widget class="QMenu" name="menuDeteksi_Objek">
      <property name="styleSheet">
@@ -803,7 +805,7 @@ QMenu::item:selected {
 }</string>
      </property>
      <property name="title">
-      <string>Deteksi Objek</string>
+      <string>Deteksi Objek ; YOLO</string>
      </property>
      <addaction name="actionDeteksi_Objek_Gambar"/>
      <addaction name="actionDeteksi_Objek_Video"/>
@@ -1321,6 +1323,16 @@ QToolButton:pressed {
   <action name="actionDeteksi_Objek_Camera">
    <property name="text">
     <string>Deteksi Objek : Camera</string>
+   </property>
+  </action>
+  <action name="actionColor_Tracking">
+   <property name="text">
+    <string>Color Tracking</string>
+   </property>
+  </action>
+  <action name="actionColor_Picker">
+   <property name="text">
+    <string>Color Picker</string>
    </property>
   </action>
  </widget>
