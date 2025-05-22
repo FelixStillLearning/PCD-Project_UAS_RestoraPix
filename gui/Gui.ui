@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1179</width>
+    <width>1195</width>
     <height>906</height>
    </rect>
   </property>
@@ -212,7 +212,7 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1179</width>
+     <width>1195</width>
      <height>26</height>
     </rect>
    </property>
@@ -628,6 +628,19 @@ QMenu::item:selected {
     <addaction name="menuH2_Local_Adaptive_otsu_Thresholding"/>
     <addaction name="actionContour"/>
    </widget>
+   <widget class="QMenu" name="menuColor_Processing">
+    <property name="title">
+     <string>Color Processing</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDeteksi_Objek">
+    <property name="title">
+     <string>Deteksi Objek</string>
+    </property>
+    <addaction name="actionDeteksi_Objek_Gambar"/>
+    <addaction name="actionDeteksi_Objek_Video"/>
+    <addaction name="actionDeteksi_Objek_Camera"/>
+   </widget>
    <addaction name="menuImageProcessing"/>
    <addaction name="menuHistogram"/>
    <addaction name="menuOperasi_Geometri"/>
@@ -638,6 +651,8 @@ QMenu::item:selected {
    <addaction name="menufile_deteksi"/>
    <addaction name="menuMorfology"/>
    <addaction name="menuSegmentasi_Citra"/>
+   <addaction name="menuColor_Processing"/>
+   <addaction name="menuDeteksi_Objek"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="styleSheet">
@@ -1127,6 +1142,21 @@ QToolButton:pressed {
   <action name="actionGrayscale_Image">
    <property name="text">
     <string>Grayscale Image</string>
+   </property>
+  </action>
+  <action name="actionDeteksi_Objek_Gambar">
+   <property name="text">
+    <string>Deteksi Objek : Gambar</string>
+   </property>
+  </action>
+  <action name="actionDeteksi_Objek_Video">
+   <property name="text">
+    <string>Deteksi Objek : Video</string>
+   </property>
+  </action>
+  <action name="actionDeteksi_Objek_Camera">
+   <property name="text">
+    <string>Deteksi Objek : Camera</string>
    </property>
   </action>
  </widget>
