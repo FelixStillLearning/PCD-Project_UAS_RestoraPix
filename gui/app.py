@@ -104,12 +104,12 @@ class ImageProcessingApp(QMainWindow):
         self.resetbutton.clicked.connect(self.reset_image)
         
         # Basic operations
-        self.prosesbutton.clicked.connect(self.apply_grayscale)
         self.actionoperasi_pencerahan.triggered.connect(self.apply_brightness)
         self.actionOperasi_Kontras.triggered.connect(self.apply_contrast)
         self.actionOperasi_Kontras_Stretching.triggered.connect(self.apply_contrast_stretching)
         self.actionNegative_Image.triggered.connect(self.apply_negative)
         self.actionBiner_Image.triggered.connect(self.apply_binarization)
+        self.actionGrayscale_Image.triggered.connect(self.apply_grayscale)
         
         # Histogram operations
         self.actionHistogram_Grayscale.triggered.connect(self.show_gray_histogram)
@@ -177,24 +177,19 @@ class ImageProcessingApp(QMainWindow):
         self.actionOtsu_Thresholding.triggered.connect(self.apply_otsu_threshold)
         
         # Contour detection
-        self.actionH3_Contour.triggered.connect(self.apply_contour_detection)
+        self.actionContour.triggered.connect(self.apply_contour_detection)
         
-        # Restoration operations
-        self.actionInpainting.triggered.connect(self.apply_inpainting)
-        self.actionDeblurring.triggered.connect(self.apply_deblurring)
-        self.actionOld_Photo_Restoration.triggered.connect(self.apply_old_photo_restoration)
         
         # Toolbar actions
         self.actionOpen.triggered.connect(self.load_image)
         self.actionSave.triggered.connect(self.save_image)
         self.actionReset.triggered.connect(self.reset_image)
-        self.actionGrayscale.triggered.connect(self.apply_grayscale)
-        self.actionHistogram.triggered.connect(self.show_gray_histogram)
         self.actionZoom_In.triggered.connect(self.apply_zoom_in_2x)
         self.actionZoom_Out.triggered.connect(self.apply_zoom_out_half)
         self.actionUndo.triggered.connect(self.undo_action)
         self.actionRedo.triggered.connect(self.redo_action)
         self.actionExit.triggered.connect(self.close)
+        self.actionExport.triggered.connect(self.export_pixel_data)
     
     def load_image(self):
         """Load an image from file"""
@@ -1615,195 +1610,6 @@ class ImageProcessingApp(QMainWindow):
             compare_images(image, result_image, "Original Image", "Contour Detection Result")
             plt.show()
     
-    def apply_inpainting(self):
-        """Apply inpainting to remove scratches or defects from the image"""
-        image = self.processor.get_image()
-        if image is None:
-            return
-        
-        # Create a dialog for inpainting options
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Inpainting Options")
-        dialog.setMinimumWidth(300)
-        
-        layout = QVBoxLayout()
-        
-        # Add an info label
-        info_label = QLabel("Inpainting will automatically detect and repair scratches and defects in the image.")
-        info_label.setWordWrap(True)
-        
-        # Option to use manual mask
-        mask_option_label = QLabel("Mask Selection:")
-        mask_option_combo = QComboBox()
-        mask_option_combo.addItems(["Auto-detect scratches", "Load mask image"])
-        
-        # Button box
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        button_box.accepted.connect(dialog.accept)
-        button_box.rejected.connect(dialog.reject)
-        
-        # Add widgets to layout
-        layout.addWidget(info_label)
-        layout.addWidget(mask_option_label)
-        layout.addWidget(mask_option_combo)
-        layout.addWidget(button_box)
-        
-        dialog.setLayout(layout)
-        
-        # Show dialog
-        if dialog.exec_() == QDialog.Accepted:
-            use_auto_mask = mask_option_combo.currentIndex() == 0
-            mask = None
-            
-            if not use_auto_mask:
-                # Let user select a mask image
-                options = QFileDialog.Options()
-                mask_path, _ = QFileDialog.getOpenFileName(
-                    self, 
-                    "Open Mask Image", 
-                    "", 
-                    "Image Files (*.png *.jpg *.jpeg *.bmp);;All Files (*)", 
-                    options=options
-                )
-                
-                if mask_path:
-                    mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
-                else:
-                    return  # User canceled mask selection
-            
-            # Show processing status
-            QApplication.setOverrideCursor(Qt.WaitCursor)
-            
-            # Apply inpainting
-            result_image = inpainting(image, mask)
-            
-            # Display the result
-            self.processor.set_image(result_image)
-            self.display_image(result_image, self.imglabelgray)
-            
-            # Compare original and processed images
-            from utils.helpers import compare_images
-            compare_images(image, result_image, "Original Image", "Inpainting Result")
-            plt.show()
-            
-            # Restore cursor
-            QApplication.restoreOverrideCursor()
-    
-    def apply_deblurring(self):
-        """Apply deblurring to sharpen a blurry image"""
-        image = self.processor.get_image()
-        if image is None:
-            return
-        
-        # Create a dialog for deblurring options
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Deblurring Options")
-        dialog.setMinimumWidth(300)
-        
-        layout = QVBoxLayout()
-        
-        # Kernel size selection
-        kernel_label = QLabel("Kernel Size:")
-        kernel_combo = QComboBox()
-        kernel_combo.addItems(["3x3", "5x5", "7x7", "9x9"])
-        kernel_combo.setCurrentIndex(1)  # Default to 5x5
-        
-        # Sigma value selection
-        sigma_label = QLabel("Sharpening Intensity:")
-        sigma_slider = QSlider(Qt.Horizontal)
-        sigma_slider.setMinimum(0)
-        sigma_slider.setMaximum(20)
-        sigma_slider.setValue(0)
-        sigma_value = QLabel("0")
-        
-        # Connect slider to label
-        sigma_slider.valueChanged.connect(lambda v: sigma_value.setText(str(v/10)))
-        
-        # Button box
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        button_box.accepted.connect(dialog.accept)
-        button_box.rejected.connect(dialog.reject)
-        
-        # Add widgets to layout
-        layout.addWidget(kernel_label)
-        layout.addWidget(kernel_combo)
-        layout.addWidget(sigma_label)
-        layout.addWidget(sigma_slider)
-        layout.addWidget(sigma_value)
-        layout.addWidget(button_box)
-        
-        dialog.setLayout(layout)
-        
-        # Show dialog
-        if dialog.exec_() == QDialog.Accepted:
-            kernel_size = int(kernel_combo.currentText().split("x")[0])
-            sigma = sigma_slider.value() / 10.0
-            
-            # Show processing status
-            QApplication.setOverrideCursor(Qt.WaitCursor)
-            
-            # Apply deblurring
-            result_image = deblurring(image, kernel_size, sigma)
-            
-            # Display the result
-            self.processor.set_image(result_image)
-            self.display_image(result_image, self.imglabelgray)
-            
-            # Compare original and processed images
-            from utils.helpers import compare_images
-            compare_images(image, result_image, "Original Image", "Deblurring Result")
-            plt.show()
-            
-            # Restore cursor
-            QApplication.restoreOverrideCursor()
-    
-    def apply_old_photo_restoration(self):
-        """Apply restoration techniques to old or damaged photos"""
-        image = self.processor.get_image()
-        if image is None:
-            return
-        
-        # Ask for confirmation
-        confirmation = QMessageBox.question(
-            self, 
-            "Old Photo Restoration", 
-            "RestoraPix will apply multiple techniques to restore this old photo. Continue?",
-            QMessageBox.Yes | QMessageBox.No
-        )
-        
-        if confirmation == QMessageBox.Yes:
-            # Show progress dialog
-            progress = QProgressDialog("Restoring old photo...", None, 0, 100, self)
-            progress.setWindowModality(Qt.WindowModal)
-            progress.setValue(0)
-            progress.show()
-            QApplication.processEvents()
-            
-            try:
-                # Apply old photo restoration
-                progress.setValue(30)
-                QApplication.processEvents()
-                
-                result_image = old_photo_restoration(image)
-                
-                progress.setValue(80)
-                QApplication.processEvents()
-                
-                # Display the result
-                self.processor.set_image(result_image)
-                self.display_image(result_image, self.imglabelgray)
-                
-                progress.setValue(100)
-                
-                # Compare original and processed images
-                from utils.helpers import compare_images
-                compare_images(image, result_image, "Original Photo", "Restored Photo")
-                plt.show()
-                
-            except Exception as e:
-                QMessageBox.critical(self, "Error", f"Error during photo restoration: {str(e)}")
-            finally:
-                progress.close()
     
     def undo_action(self):
         """Undo the last image processing action"""
@@ -1820,8 +1626,51 @@ class ImageProcessingApp(QMainWindow):
             self.display_image(next_image, self.imglabelgray)
         else:
             QMessageBox.information(self, "Redo", "Nothing to redo")
+    
+    def export_pixel_data(self):
+        """Fungsi ekspor data piksel dengan pemilihan format melalui dialog."""
+        image = self.processor.get_image()
+        if image is None:
+            QMessageBox.warning(self, "Peringatan", "Tidak ada gambar yang dimuat!")
+            return
 
-# Main application entry point
+        # Dialog Pilihan Format
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Pilih Format Ekspor")
+        layout = QVBoxLayout(dialog)
+
+        label = QLabel("Pilih format file:")
+        layout.addWidget(label)
+
+        format_combo = QComboBox()
+        format_combo.addItems(["txt", "csv", "xlsx"])
+        layout.addWidget(format_combo)
+
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(dialog.accept)
+        layout.addWidget(ok_button)
+
+        dialog.setLayout(layout)
+
+        if dialog.exec_() != QDialog.Accepted:
+            return  # Jika user batal
+
+        selected_format = format_combo.currentText()
+
+        # Pilih Lokasi Simpan
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Simpan Data Piksel", "", f"*.{selected_format}"
+        )
+
+        if not file_path:
+            return  # Jika user batal
+
+        # Use the core function to export pixel data
+        if self.processor.export_pixel_data(file_path, selected_format):
+            QMessageBox.information(self, "Sukses", f"Data piksel berhasil diekspor ke {file_path}")
+        else:
+            QMessageBox.warning(self, "Gagal", "Gagal mengekspor data piksel!")
+
 def run():
     app = QtWidgets.QApplication(sys.argv)
     window = ImageProcessingApp()

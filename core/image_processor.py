@@ -134,3 +134,45 @@ class ImageProcessor:
         self.image = next_image
         
         return next_image
+
+    def export_pixel_data(self, file_path, format_type):
+        """
+        Export pixel data of current image to a file
+        
+        Parameters:
+        file_path (str): Path to save the file
+        format_type (str): Format type ('txt', 'csv', or 'xlsx')
+        
+        Returns:
+        bool: True if successful, False otherwise
+        """
+        if self.image is None:
+            return False
+            
+        try:
+            # Get image dimensions and data
+            if len(self.image.shape) == 2:  # Grayscale
+                height, width = self.image.shape
+                pixel_data = self.image.reshape(height * width, 1)
+                columns = ["Gray"]
+            else:  # RGB
+                height, width, _ = self.image.shape
+                pixel_data = self.image.reshape(height * width, 3)
+                columns = ["Red", "Green", "Blue"]
+                
+            # Export based on format
+            if format_type == 'txt':
+                np.savetxt(file_path, pixel_data, fmt="%d", delimiter=",")
+            elif format_type == 'csv':
+                import pandas as pd
+                pd.DataFrame(pixel_data, columns=columns).to_csv(file_path, index=False)
+            elif format_type == 'xlsx':
+                import pandas as pd
+                pd.DataFrame(pixel_data, columns=columns).to_excel(file_path, index=False, engine="openpyxl")
+            else:
+                return False
+                
+            return True
+        except Exception as e:
+            print(f"Error exporting pixel data: {str(e)}")
+            return False
