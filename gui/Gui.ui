@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1163</width>
-    <height>783</height>
+    <width>1000</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="font">
@@ -30,10 +30,10 @@
    <widget class="QLabel" name="imglabel">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>60</y>
-      <width>380</width>
-      <height>360</height>
+      <x>10</x>
+      <y>40</y>
+      <width>431</width>
+      <height>421</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -50,7 +50,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>440</y>
+      <y>480</y>
       <width>180</width>
       <height>40</height>
      </rect>
@@ -78,10 +78,10 @@ QPushButton:pressed {
    <widget class="QLabel" name="imglabelgray">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>60</y>
-      <width>380</width>
-      <height>360</height>
+      <x>450</x>
+      <y>40</y>
+      <width>431</width>
+      <height>421</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -97,8 +97,8 @@ QPushButton:pressed {
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>30</y>
+      <x>10</x>
+      <y>10</y>
       <width>110</width>
       <height>26</height>
      </rect>
@@ -124,8 +124,8 @@ QPushButton:pressed {
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>30</y>
+      <x>460</x>
+      <y>0</y>
       <width>110</width>
       <height>26</height>
      </rect>
@@ -151,8 +151,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="resetbutton">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>520</y>
+      <x>350</x>
+      <y>480</y>
       <width>180</width>
       <height>40</height>
      </rect>
@@ -180,8 +180,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="savebutton">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>450</y>
+      <x>570</x>
+      <y>480</y>
       <width>180</width>
       <height>40</height>
      </rect>
@@ -212,7 +212,7 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1163</width>
+     <width>1000</width>
      <height>26</height>
     </rect>
    </property>
@@ -231,7 +231,7 @@ QMenuBar::item:selected {
     background-color: rgb(61, 174, 233);
 }</string>
    </property>
-   <widget class="QMenu" name="menuImageProcessing">
+   <widget class="QMenu" name="menuDasar">
     <property name="styleSheet">
      <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
@@ -249,61 +249,9 @@ QMenu::item:selected {
 }</string>
     </property>
     <property name="title">
-     <string>Operasi Titik</string>
+     <string>Dasar</string>
     </property>
-    <addaction name="separator"/>
-    <addaction name="actionoperasi_pencerahan"/>
-    <addaction name="actionOperasi_Kontras"/>
-    <addaction name="actionOperasi_Kontras_Stretching"/>
-    <addaction name="actionNegative_Image"/>
-    <addaction name="actionBiner_Image"/>
-    <addaction name="actionGrayscale_Image"/>
-   </widget>
-   <widget class="QMenu" name="menuHistogram">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-    </property>
-    <property name="title">
-     <string>Histogram</string>
-    </property>
-    <addaction name="actionHistogram_Grayscale"/>
-    <addaction name="actionHistogram_RGB"/>
-    <addaction name="actionHistogram_Equalization"/>
-   </widget>
-   <widget class="QMenu" name="menuOperasi_Geometri">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-    </property>
-    <property name="title">
-     <string>Operasi Geometri</string>
-    </property>
-    <widget class="QMenu" name="menuRotasi">
+    <widget class="QMenu" name="menuImageProcessing">
      <property name="styleSheet">
       <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
@@ -321,15 +269,17 @@ QMenu::item:selected {
 }</string>
      </property>
      <property name="title">
-      <string>Rotasi</string>
+      <string>Operasi Titik</string>
      </property>
-     <addaction name="action90_Derajat"/>
-     <addaction name="action_90_Derajat"/>
-     <addaction name="action45_Derajat"/>
-     <addaction name="action_45_Derajat"/>
-     <addaction name="action180_Derajat"/>
+     <addaction name="separator"/>
+     <addaction name="actionoperasi_pencerahan"/>
+     <addaction name="actionOperasi_Kontras"/>
+     <addaction name="actionOperasi_Kontras_Stretching"/>
+     <addaction name="actionNegative_Image"/>
+     <addaction name="actionBiner_Image"/>
+     <addaction name="actionGrayscale_Image"/>
     </widget>
-    <widget class="QMenu" name="menuResize">
+    <widget class="QMenu" name="menuHistogram">
      <property name="styleSheet">
       <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
@@ -347,69 +297,15 @@ QMenu::item:selected {
 }</string>
      </property>
      <property name="title">
-      <string>Resize</string>
+      <string>Histogram</string>
      </property>
-     <widget class="QMenu" name="menuZoom_in">
-      <property name="styleSheet">
-       <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-      </property>
-      <property name="title">
-       <string>Zoom in</string>
-      </property>
-      <addaction name="action2x"/>
-      <addaction name="action3x"/>
-      <addaction name="action4x"/>
-     </widget>
-     <widget class="QMenu" name="menuZoom_out">
-      <property name="styleSheet">
-       <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-      </property>
-      <property name="title">
-       <string>Zoom out</string>
-      </property>
-      <addaction name="action1_2"/>
-      <addaction name="action1_4"/>
-      <addaction name="action3_4"/>
-     </widget>
-     <addaction name="menuZoom_in"/>
-     <addaction name="menuZoom_out"/>
-     <addaction name="actionSkewed"/>
+     <addaction name="actionHistogram_Grayscale"/>
+     <addaction name="actionHistogram_RGB"/>
+     <addaction name="actionHistogram_Equalization"/>
     </widget>
-    <addaction name="actiontranslasi"/>
-    <addaction name="menuRotasi"/>
-    <addaction name="actionTranspose"/>
-    <addaction name="menuResize"/>
-    <addaction name="actionCrop"/>
-   </widget>
-   <widget class="QMenu" name="menuOperasi_Aritmatika">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
+    <widget class="QMenu" name="menuOperasiMatematika">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
     color: white;
     border: 1px solid rgb(60, 63, 65);
@@ -423,16 +319,13 @@ QMenu::item {
 QMenu::item:selected {
     background-color: rgb(61, 174, 233);
 }</string>
-    </property>
-    <property name="title">
-     <string>Operasi Aritmatika</string>
-    </property>
-    <addaction name="actionTambah_dan_Kurang"/>
-    <addaction name="actionKali_dan_Bagi"/>
-   </widget>
-   <widget class="QMenu" name="menuOperasi_Boolean">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
+     </property>
+     <property name="title">
+      <string>Operasi Matematika</string>
+     </property>
+     <widget class="QMenu" name="menuOperasi_Aritmatika">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
     color: white;
     border: 1px solid rgb(60, 63, 65);
@@ -446,17 +339,16 @@ QMenu::item {
 QMenu::item:selected {
     background-color: rgb(61, 174, 233);
 }</string>
-    </property>
-    <property name="title">
-     <string>Operasi Boolean</string>
-    </property>
-    <addaction name="actionOperasi_AND"/>
-    <addaction name="actionOperasi_OR"/>
-    <addaction name="actionOperasi_XOR"/>
-   </widget>
-   <widget class="QMenu" name="menuOperasi_Spacial">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
+      </property>
+      <property name="title">
+       <string>Operasi Aritmatika</string>
+      </property>
+      <addaction name="actionTambah_dan_Kurang"/>
+      <addaction name="actionKali_dan_Bagi"/>
+     </widget>
+     <widget class="QMenu" name="menuOperasi_Boolean">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
     color: white;
     border: 1px solid rgb(60, 63, 65);
@@ -470,17 +362,22 @@ QMenu::item {
 QMenu::item:selected {
     background-color: rgb(61, 174, 233);
 }</string>
-    </property>
-    <property name="title">
-     <string>Operasi Spacial</string>
-    </property>
-    <addaction name="actionFiltering"/>
-    <addaction name="actionSharpening"/>
-    <addaction name="actionMedian_Filter"/>
-    <addaction name="actionMax_Filter"/>
-    <addaction name="actionMin_Filter"/>
+      </property>
+      <property name="title">
+       <string>Operasi Boolean</string>
+      </property>
+      <addaction name="actionOperasi_AND"/>
+      <addaction name="actionOperasi_OR"/>
+      <addaction name="actionOperasi_XOR"/>
+     </widget>
+     <addaction name="menuOperasi_Aritmatika"/>
+     <addaction name="menuOperasi_Boolean"/>
+    </widget>
+    <addaction name="menuImageProcessing"/>
+    <addaction name="menuHistogram"/>
+    <addaction name="menuOperasiMatematika"/>
    </widget>
-   <widget class="QMenu" name="menuOperasi_Frekuensi">
+   <widget class="QMenu" name="menuTransformasi">
     <property name="styleSheet">
      <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
@@ -500,81 +397,7 @@ QMenu::item:selected {
     <property name="title">
      <string>Transformasi</string>
     </property>
-    <addaction name="actionDFT_Smoothing_Image"/>
-    <addaction name="actionDFT_Edge_Detection"/>
-   </widget>
-   <widget class="QMenu" name="menufile_deteksi">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-    </property>
-    <property name="title">
-     <string>Deteksi tepi</string>
-    </property>
-    <addaction name="actionSobel"/>
-    <addaction name="actionPrewitt"/>
-    <addaction name="actionRobert"/>
-    <addaction name="actionCanny"/>
-   </widget>
-   <widget class="QMenu" name="menuMorfology">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-    </property>
-    <property name="title">
-     <string>Morfology</string>
-    </property>
-    <addaction name="actionDilasi"/>
-    <addaction name="actionErosi"/>
-    <addaction name="actionopening"/>
-    <addaction name="actionClosing"/>
-    <addaction name="actionSkeletonizing"/>
-   </widget>
-   <widget class="QMenu" name="menuSegmentasi_Citra">
-    <property name="styleSheet">
-     <string notr="true">QMenu {
-    background-color: rgb(50, 54, 62);
-    color: white;
-    border: 1px solid rgb(60, 63, 65);
-    border-radius: 4px;
-    padding: 5px;
-}
-QMenu::item {
-    padding: 5px 25px 5px 20px;
-    border-radius: 3px;
-}
-QMenu::item:selected {
-    background-color: rgb(61, 174, 233);
-}</string>
-    </property>
-    <property name="title">
-     <string>Segmentasi Citra</string>
-    </property>
-    <widget class="QMenu" name="menuH1_Global_Thresholding">
+    <widget class="QMenu" name="menuOperasi_Geometri">
      <property name="styleSheet">
       <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
@@ -592,15 +415,113 @@ QMenu::item:selected {
 }</string>
      </property>
      <property name="title">
-      <string>Global Thresholding</string>
+      <string>Operasi Geometri</string>
      </property>
-     <addaction name="actionBinary_Thresholding"/>
-     <addaction name="actionBinary_Inv_Thresholding"/>
-     <addaction name="actionTrunc_Thresholding"/>
-     <addaction name="actionToZero_Thresholding"/>
-     <addaction name="actionToZero_Inv_Thresholding"/>
+     <widget class="QMenu" name="menuRotasi">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+      </property>
+      <property name="title">
+       <string>Rotasi</string>
+      </property>
+      <addaction name="action90_Derajat"/>
+      <addaction name="action_90_Derajat"/>
+      <addaction name="action45_Derajat"/>
+      <addaction name="action_45_Derajat"/>
+      <addaction name="action180_Derajat"/>
+     </widget>
+     <widget class="QMenu" name="menuResize">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+      </property>
+      <property name="title">
+       <string>Resize</string>
+      </property>
+      <widget class="QMenu" name="menuZoom_in">
+       <property name="styleSheet">
+        <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+       </property>
+       <property name="title">
+        <string>Zoom in</string>
+       </property>
+       <addaction name="action2x"/>
+       <addaction name="action3x"/>
+       <addaction name="action4x"/>
+      </widget>
+      <widget class="QMenu" name="menuZoom_out">
+       <property name="styleSheet">
+        <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+       </property>
+       <property name="title">
+        <string>Zoom out</string>
+       </property>
+       <addaction name="action1_2"/>
+       <addaction name="action1_4"/>
+       <addaction name="action3_4"/>
+      </widget>
+      <addaction name="menuZoom_in"/>
+      <addaction name="menuZoom_out"/>
+      <addaction name="actionSkewed"/>
+     </widget>
+     <addaction name="actiontranslasi"/>
+     <addaction name="menuRotasi"/>
+     <addaction name="actionTranspose"/>
+     <addaction name="menuResize"/>
+     <addaction name="actionCrop"/>
     </widget>
-    <widget class="QMenu" name="menuH2_Local_Adaptive_otsu_Thresholding">
+    <widget class="QMenu" name="menuOperasi_Frekuensi">
      <property name="styleSheet">
       <string notr="true">QMenu {
     background-color: rgb(50, 54, 62);
@@ -618,26 +539,286 @@ QMenu::item:selected {
 }</string>
      </property>
      <property name="title">
-      <string>Local/Adaptive otsu Thresholding</string>
+      <string>Transformasi Frekuensi</string>
      </property>
-     <addaction name="actionMean_Thresholding"/>
-     <addaction name="actionGaussian_Thresholding"/>
-     <addaction name="actionOtsu_Thresholding"/>
+     <addaction name="actionDFT_Smoothing_Image"/>
+     <addaction name="actionDFT_Edge_Detection"/>
     </widget>
-    <addaction name="menuH1_Global_Thresholding"/>
-    <addaction name="menuH2_Local_Adaptive_otsu_Thresholding"/>
-    <addaction name="actionContour"/>
+    <addaction name="menuOperasi_Geometri"/>
+    <addaction name="menuOperasi_Frekuensi"/>
    </widget>
-   <addaction name="menuImageProcessing"/>
-   <addaction name="menuHistogram"/>
-   <addaction name="menuOperasi_Geometri"/>
-   <addaction name="menuOperasi_Aritmatika"/>
-   <addaction name="menuOperasi_Boolean"/>
-   <addaction name="menuOperasi_Spacial"/>
-   <addaction name="menuOperasi_Frekuensi"/>
-   <addaction name="menufile_deteksi"/>
-   <addaction name="menuMorfology"/>
-   <addaction name="menuSegmentasi_Citra"/>
+   <widget class="QMenu" name="menuFiltering">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Filtering</string>
+    </property>
+    <widget class="QMenu" name="menuOperasi_Spacial">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Operasi Spacial</string>
+     </property>
+     <addaction name="actionFiltering"/>
+     <addaction name="actionSharpening"/>
+     <addaction name="actionMedian_Filter"/>
+     <addaction name="actionMax_Filter"/>
+     <addaction name="actionMin_Filter"/>
+    </widget>
+    <widget class="QMenu" name="menufile_deteksi">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Deteksi tepi</string>
+     </property>
+     <addaction name="actionSobel"/>
+     <addaction name="actionPrewitt"/>
+     <addaction name="actionRobert"/>
+     <addaction name="actionCanny"/>
+    </widget>
+    <addaction name="menuOperasi_Spacial"/>
+    <addaction name="menufile_deteksi"/>
+   </widget>
+   <widget class="QMenu" name="menuSegmentasi">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Segmentasi</string>
+    </property>
+    <widget class="QMenu" name="menuMorfology">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Morfology</string>
+     </property>
+     <addaction name="actionDilasi"/>
+     <addaction name="actionErosi"/>
+     <addaction name="actionopening"/>
+     <addaction name="actionClosing"/>
+     <addaction name="actionSkeletonizing"/>
+    </widget>
+    <widget class="QMenu" name="menuSegmentasi_Citra">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Segmentasi Citra</string>
+     </property>
+     <widget class="QMenu" name="menuH1_Global_Thresholding">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+      </property>
+      <property name="title">
+       <string>Global Thresholding</string>
+      </property>
+      <addaction name="actionBinary_Thresholding"/>
+      <addaction name="actionBinary_Inv_Thresholding"/>
+      <addaction name="actionTrunc_Thresholding"/>
+      <addaction name="actionToZero_Thresholding"/>
+      <addaction name="actionToZero_Inv_Thresholding"/>
+     </widget>
+     <widget class="QMenu" name="menuH2_Local_Adaptive_otsu_Thresholding">
+      <property name="styleSheet">
+       <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+      </property>
+      <property name="title">
+       <string>Local/Adaptive otsu Thresholding</string>
+      </property>
+      <addaction name="actionMean_Thresholding"/>
+      <addaction name="actionGaussian_Thresholding"/>
+      <addaction name="actionOtsu_Thresholding"/>
+     </widget>
+     <addaction name="menuH1_Global_Thresholding"/>
+     <addaction name="menuH2_Local_Adaptive_otsu_Thresholding"/>
+     <addaction name="actionContour"/>
+    </widget>
+    <addaction name="menuMorfology"/>
+    <addaction name="menuSegmentasi_Citra"/>
+   </widget>
+   <widget class="QMenu" name="menuAnalisis">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+    </property>
+    <property name="title">
+     <string>Analisis</string>
+    </property>
+    <widget class="QMenu" name="menuColor_Processing">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Color Processing</string>
+     </property>
+     <addaction name="actionColor_Tracking"/>
+     <addaction name="actionColor_Picker"/>
+    </widget>
+    <widget class="QMenu" name="menuDeteksi_Objek">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Deteksi Objek ; YOLO</string>
+     </property>
+     <addaction name="actionDeteksi_Objek_Gambar"/>
+     <addaction name="actionDeteksi_Objek_Video"/>
+     <addaction name="actionDeteksi_Objek_Camera"/>
+    </widget>
+    <addaction name="menuColor_Processing"/>
+    <addaction name="menuDeteksi_Objek"/>
+   </widget>
+   <addaction name="menuDasar"/>
+   <addaction name="menuTransformasi"/>
+   <addaction name="menuFiltering"/>
+   <addaction name="menuSegmentasi"/>
+   <addaction name="menuAnalisis"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="styleSheet">
@@ -1127,6 +1308,31 @@ QToolButton:pressed {
   <action name="actionGrayscale_Image">
    <property name="text">
     <string>Grayscale Image</string>
+   </property>
+  </action>
+  <action name="actionDeteksi_Objek_Gambar">
+   <property name="text">
+    <string>Deteksi Objek : Gambar</string>
+   </property>
+  </action>
+  <action name="actionDeteksi_Objek_Video">
+   <property name="text">
+    <string>Deteksi Objek : Video</string>
+   </property>
+  </action>
+  <action name="actionDeteksi_Objek_Camera">
+   <property name="text">
+    <string>Deteksi Objek : Camera</string>
+   </property>
+  </action>
+  <action name="actionColor_Tracking">
+   <property name="text">
+    <string>Color Tracking</string>
+   </property>
+  </action>
+  <action name="actionColor_Picker">
+   <property name="text">
+    <string>Color Picker</string>
    </property>
   </action>
  </widget>

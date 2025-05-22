@@ -152,7 +152,7 @@ def display_multiple_images(images, titles=None, rows=1, cols=None, figsize=(15,
     
     return fig
 
-def compare_images(original, processed, title1="Original", title2="Processed"):
+def compare_images(original, processed, title1="Original", title2="Processed", figsize=(10, 5)):
     """
     Display original and processed images side by side
     
@@ -161,11 +161,12 @@ def compare_images(original, processed, title1="Original", title2="Processed"):
     processed (numpy.ndarray): Processed image
     title1 (str): Title for the original image
     title2 (str): Title for the processed image
+    figsize (tuple): Figure size (width, height) in inches, default is (10, 5) which is 1000x500 at 100 DPI
     
     Returns:
     matplotlib.figure.Figure: Figure with comparison
     """
-    return display_multiple_images([original, processed], [title1, title2], rows=1, cols=2)
+    return display_multiple_images([original, processed], [title1, title2], rows=1, cols=2, figsize=figsize)
 
 def generate_timestamp():
     """

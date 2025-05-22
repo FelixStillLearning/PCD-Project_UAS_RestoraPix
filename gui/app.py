@@ -80,6 +80,14 @@ from modules.restoration.operations import (
     inpainting, deblurring, old_photo_restoration
 )
 
+# Import object detection module
+from modules.object_detection.detector import (
+    detect_objects, detect_objects_from_camera, detect_objects_from_video
+)
+
+# Import color processing module
+from modules.color_processing import color_picker, color_tracking, color_analyzer
+
 class ImageProcessingApp(QMainWindow):
     """
     Main application class for the image processing GUI
@@ -179,7 +187,6 @@ class ImageProcessingApp(QMainWindow):
         # Contour detection
         self.actionContour.triggered.connect(self.apply_contour_detection)
         
-        
         # Toolbar actions
         self.actionOpen.triggered.connect(self.load_image)
         self.actionSave.triggered.connect(self.save_image)
@@ -190,6 +197,22 @@ class ImageProcessingApp(QMainWindow):
         self.actionRedo.triggered.connect(self.redo_action)
         self.actionExit.triggered.connect(self.close)
         self.actionExport.triggered.connect(self.export_pixel_data)
+
+        # Color Processing
+        self.actionColor_Picker = QAction(self.apply_color_picker)
+        self.actionColor_Tracking = QAction(self.apply_color_tracking)
+    
+        
+        # Connect color processing actions to functions
+        self.actionColor_Picker.triggered.connect(self.apply_color_picker)
+        self.actionColor_Tracking.triggered.connect(self.apply_color_tracking)
+        self.actionColor_Analyzer.triggered.connect(self.apply_color_analyzer)
+        
+        # Object detection
+        self.actionDeteksi_Objek_Gambar.triggered.connect(self.apply_object_detection_image)
+        self.actionDeteksi_Objek_Camera.triggered.connect(self.apply_object_detection_camera)
+        self.actionDeteksi_Objek_Video.triggered.connect(self.apply_object_detection_video)
+
     
     def load_image(self):
         """Load an image from file"""
@@ -1481,7 +1504,7 @@ class ImageProcessingApp(QMainWindow):
         image = self.processor.get_image()
         if image is None:
             return
-                
+    
         # Apply to-zero threshold
         thresholded_image = tozero_threshold(image)
             
@@ -1670,6 +1693,276 @@ class ImageProcessingApp(QMainWindow):
             QMessageBox.information(self, "Sukses", f"Data piksel berhasil diekspor ke {file_path}")
         else:
             QMessageBox.warning(self, "Gagal", "Gagal mengekspor data piksel!")
+
+    def apply_object_detection_image(self):
+        """Apply object detection to the current image using YOLOv5"""
+        image = self.processor.get_image()
+        if image is None:
+            QMessageBox.warning(self, "Warning", "No image loaded!")
+            return
+        
+        # Create a dialog for object detection parameters
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Object Detection Parameters")
+        dialog.setMinimumWidth(300)
+        
+        layout = QVBoxLayout()
+        
+        # Confidence threshold selection
+        conf_label = QLabel("Confidence Threshold:")
+        conf_slider = QSlider(Qt.Horizontal)
+        conf_slider.setMinimum(1)
+        conf_slider.setMaximum(99)
+        conf_slider.setValue(25)  # Default 0.25
+        conf_value = QLabel("0.25")
+        
+        # Connect slider to label
+        conf_slider.valueChanged.connect(lambda v: conf_value.setText(f"{v/100:.2f}"))
+        
+        # Model selection
+        model_label = QLabel("Model:")
+        model_combo = QComboBox()
+        
+        # Check for available models
+        model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "yolov5s.pt")
+        if os.path.exists(model_path):
+            model_combo.addItem("YOLOv5s (Default)", "yolov5s.pt")
+        else:
+            model_combo.addItem("YOLOv5s (Default, will download)", "yolov5s.pt")
+        
+        # Button box
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(dialog.accept)
+        button_box.rejected.connect(dialog.reject)
+        
+        # Add widgets to layout
+        layout.addWidget(model_label)
+        layout.addWidget(model_combo)
+        layout.addWidget(conf_label)
+        layout.addWidget(conf_slider)
+        layout.addWidget(conf_value)
+        layout.addWidget(button_box)
+        
+        dialog.setLayout(layout)
+        
+        # Show dialog
+        if dialog.exec_() == QDialog.Accepted:
+            confidence = conf_slider.value() / 100
+            model_name = model_combo.currentData()
+            
+            # Get model path
+            if model_name == "yolov5s.pt":
+                model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), model_name)
+                if not os.path.exists(model_path):
+                    # Will be downloaded by YOLO
+                    model_path = model_name
+            
+            # Import object detection function
+            from modules.object_detection.detector import detect_objects
+            
+            # Show progress dialog
+            progress = QProgressDialog("Running object detection...", None, 0, 0, self)
+            progress.setWindowModality(Qt.WindowModal)
+            progress.show()
+            QApplication.processEvents()
+            
+            try:
+                # Apply object detection
+                result_image, detections = detect_objects(image, model_path=model_path, confidence=confidence)
+                
+                # Close progress dialog
+                progress.close()
+                
+                # Update and display the result
+                self.processor.set_image(result_image)
+                self.display_image(result_image, self.imglabelgray)
+                
+                # Show detection results in a message box
+                if detections is not None and len(detections) > 0:
+                    results_text = "Detected Objects:\n"
+                    for det in detections:
+                        results_text += f"- {det['class']} (Confidence: {det['confidence']:.2f})\n"
+                    QMessageBox.information(self, "Object Detection Results", results_text)
+                else:
+                    QMessageBox.information(self, "Object Detection Results", "No objects detected.")
+            
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Error during object detection: {str(e)}")
+        
+    def apply_object_detection_camera(self):
+        """Apply object detection from camera feed"""
+        # Create a dialog for object detection parameters
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Object Detection from Camera")
+        dialog.setMinimumWidth(300)
+        
+        layout = QVBoxLayout()
+        
+        # Confidence threshold selection
+        conf_label = QLabel("Confidence Threshold:")
+        conf_slider = QSlider(Qt.Horizontal)
+        conf_slider.setMinimum(1)
+        conf_slider.setMaximum(99)
+        conf_slider.setValue(25)  # Default 0.25
+        conf_value = QLabel("0.25")
+        
+        # Connect slider to label
+        conf_slider.valueChanged.connect(lambda v: conf_value.setText(f"{v/100:.2f}"))
+        
+        # Model selection
+        model_label = QLabel("Model:")
+        model_combo = QComboBox()
+        
+        # Check for available models
+        model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "yolov5s.pt")
+        if os.path.exists(model_path):
+            model_combo.addItem("YOLOv5s (Default)", "yolov5s.pt")
+        else:
+            model_combo.addItem("YOLOv5s (Default, will download)", "yolov5s.pt")
+        
+        # Button box
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(dialog.accept)
+        button_box.rejected.connect(dialog.reject)
+        
+        # Add widgets to layout
+        layout.addWidget(model_label)
+        layout.addWidget(model_combo)
+        layout.addWidget(conf_label)
+        layout.addWidget(conf_slider)
+        layout.addWidget(conf_value)
+        layout.addWidget(button_box)
+        
+        dialog.setLayout(layout)
+        
+        # Show dialog
+        if dialog.exec_() == QDialog.Accepted:
+            confidence = conf_slider.value() / 100
+            model_name = model_combo.currentData()
+            
+            # Get model path
+            if model_name == "yolov5s.pt":
+                model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), model_name)
+                if not os.path.exists(model_path):
+                    # Will be downloaded by YOLO
+                    model_path = model_name
+            
+            
+            # Show progress dialog
+            progress = QProgressDialog("Starting camera object detection...", None, 0, 0, self)
+            progress.setWindowModality(Qt.WindowModal)
+            progress.show()
+            QApplication.processEvents()
+            
+            try:
+                # Apply object detection from camera
+                detect_objects_from_camera(model_path=model_path, confidence=confidence)
+                
+                # Close progress dialog
+                progress.close()
+                
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Error during object detection: {str(e)}")
+        
+    def apply_object_detection_video(self):
+        """Apply object detection from video file"""
+        # Open file dialog to select a video file
+        options = QFileDialog.Options()
+        filePath, _ = QFileDialog.getOpenFileName(
+            self, 
+            "Open Video File", 
+            "", 
+            "Video Files (*.mp4 *.avi *.mov *.mkv);;All Files (*)", 
+            options=options
+        )
+        
+        if not filePath:
+            return  # User canceled the file dialog
+        
+        # Create a dialog for object detection parameters
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Object Detection from Video")
+        dialog.setMinimumWidth(300)
+        
+        layout = QVBoxLayout()
+        
+        # Confidence threshold selection
+        conf_label = QLabel("Confidence Threshold:")
+        conf_slider = QSlider(Qt.Horizontal)
+        conf_slider.setMinimum(1)
+        conf_slider.setMaximum(99)
+        conf_slider.setValue(25)  # Default 0.25
+        conf_value = QLabel("0.25")
+        
+        # Connect slider to label
+        conf_slider.valueChanged.connect(lambda v: conf_value.setText(f"{v/100:.2f}"))
+        
+        # Model selection
+        model_label = QLabel("Model:")
+        model_combo = QComboBox()
+        
+        # Check for available models
+        model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "yolov5s.pt")
+        if os.path.exists(model_path):
+            model_combo.addItem("YOLOv5s (Default)", "yolov5s.pt")
+        else:
+            model_combo.addItem("YOLOv5s (Default, will download)", "yolov5s.pt")
+        
+        # Button box
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(dialog.accept)
+        button_box.rejected.connect(dialog.reject)
+        
+        # Add widgets to layout
+        layout.addWidget(model_label)
+        layout.addWidget(model_combo)
+        layout.addWidget(conf_label)
+        layout.addWidget(conf_slider)
+        layout.addWidget(conf_value)
+        layout.addWidget(button_box)
+        
+        dialog.setLayout(layout)
+        
+        # Show dialog
+        if dialog.exec_() == QDialog.Accepted:
+            confidence = conf_slider.value() / 100
+            model_name = model_combo.currentData()
+            
+            # Get model path
+            if model_name == "yolov5s.pt":
+                model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), model_name)
+                if not os.path.exists(model_path):
+                    # Will be downloaded by YOLO
+                    model_path = model_name
+            
+            # Import object detection function
+            from modules.object_detection.detector import detect_objects_from_video
+            
+            # Show progress dialog
+            progress = QProgressDialog("Starting video object detection...", None, 0, 0, self)
+            progress.setWindowModality(Qt.WindowModal)
+            progress.show()
+            QApplication.processEvents()
+            
+            try:
+                # Apply object detection from video
+                detect_objects_from_video(filePath, model_path=model_path, confidence=confidence)
+                
+                # Close progress dialog
+                progress.close()
+                
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Error during object detection: {str(e)}")
+    
+    # Color Processing methods
+    def apply_color_picker(self):
+        """Apply color picker tool to identify HSV color values"""
+        color_picker()
+    
+    def apply_color_tracking(self):
+        """Apply color tracking tool to track specific colors"""
+        color_tracking()
+    
 
 def run():
     app = QtWidgets.QApplication(sys.argv)
