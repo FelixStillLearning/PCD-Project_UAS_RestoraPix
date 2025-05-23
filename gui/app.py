@@ -86,7 +86,8 @@ from modules.object_detection.detector import (
 )
 
 # Import color processing module
-from modules.color_processing import color_picker, color_tracking
+from modules.color_processing.color_processor import(color_picker, color_tracking
+)
 
 class ImageProcessingApp(QMainWindow):
     """
