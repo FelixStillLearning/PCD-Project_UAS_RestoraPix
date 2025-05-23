@@ -86,7 +86,7 @@ from modules.object_detection.detector import (
 )
 
 # Import color processing module
-from modules.color_processing import color_picker, color_tracking, color_analyzer
+from modules.color_processing import color_picker, color_tracking
 
 class ImageProcessingApp(QMainWindow):
     """
@@ -199,14 +199,12 @@ class ImageProcessingApp(QMainWindow):
         self.actionExport.triggered.connect(self.export_pixel_data)
 
         # Color Processing
-        self.actionColor_Picker = QAction(self.apply_color_picker)
-        self.actionColor_Tracking = QAction(self.apply_color_tracking)
-    
+        self.actionColor_Picker = QAction("Color Picker", self)
+        self.actionColor_Tracking = QAction("Color Tracking", self)
         
         # Connect color processing actions to functions
         self.actionColor_Picker.triggered.connect(self.apply_color_picker)
         self.actionColor_Tracking.triggered.connect(self.apply_color_tracking)
-        self.actionColor_Analyzer.triggered.connect(self.apply_color_analyzer)
         
         # Object detection
         self.actionDeteksi_Objek_Gambar.triggered.connect(self.apply_object_detection_image)
