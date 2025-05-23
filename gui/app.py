@@ -199,10 +199,6 @@ class ImageProcessingApp(QMainWindow):
         self.actionExit.triggered.connect(self.close)
         self.actionExport.triggered.connect(self.export_pixel_data)
 
-        # Color Processing
-        self.actionColor_Picker = QAction("Color Picker", self)
-        self.actionColor_Tracking = QAction("Color Tracking", self)
-        
         # Connect color processing actions to functions
         self.actionColor_Picker.triggered.connect(self.apply_color_picker)
         self.actionColor_Tracking.triggered.connect(self.apply_color_tracking)
