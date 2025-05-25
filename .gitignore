@@ -1,14 +1,40 @@
+# ====================================
+# ALPHABETIC RECOGNITION PROJECT
+# .gitignore for GitHub Repository
+# ====================================
+
+# ===== PYTHON SPECIFIC =====
 # Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 
 # Distribution / packaging
-dist/
+.Python
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
 *.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Virtual environments
+# PyInstaller
+*.manifest
+*.spec
+
+# ===== VIRTUAL ENVIRONMENTS =====
 .env
 .venv
 env/
@@ -16,36 +42,203 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+Scripts/
+pyvenv.cfg
 
-# IDE files
+# ===== IDE AND EDITORS =====
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
 
-# Jupyter Notebook
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# ===== JUPYTER NOTEBOOKS =====
 .ipynb_checkpoints
+*/.ipynb_checkpoints/*
 
-# Local testing and development files
+# ===== TESTING AND COVERAGE =====
 .coverage
+.coverage.*
 htmlcov/
+.tox/
+.nox/
 .pytest_cache/
+cover/
+*.cover
+*.py,cover
+.hypothesis/
 
-# OS specific files
-.DS_Store
-Thumbs.db
+# ===== MACHINE LEARNING SPECIFIC =====
+# Trained models (keep only model structure, not weights)
+models/*.pkl
+models/*.h5
+models/*.pt
+models/*.pth
+models/*.onnx
+models/*.pb
+models/*.tflite
+models/checkpoints/
+models/weights/
 
-# Qt artifacts
-*.qmlc
-*.jsc
+# Keep model architecture files but ignore specific trained models
+!models/README.md
+!models/model_architecture.py
+!models/config.json
 
-# Image files that might be too large
+# ===== DATASETS =====
+# Large image datasets - exclude from repository
+dataset/alphabets/Sample*/
+dataset/fnt_organized/*/
+dataset/chars74k/
+dataset/training_data/
+dataset/test_data/
+dataset/validation_data/
+dataset/*.zip
+dataset/*.tar.gz
+dataset/*.rar
+
+# Keep dataset structure documentation
+!dataset/README.md
+!dataset/DATASET_INFO.md
+!dataset/sample_images/
+
+# ===== LARGE FILES =====
+# Image files that are too large for GitHub
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
 *.tiff
 *.tif
 *.psd
 *.raw
+*.ico
 
-# Other potential files
+# Keep small sample/example images
+!assets/sample_*.png
+!assets/sample_*.jpg
+!screenshots/*.png
+!screenshots/*.jpg
+!docs/images/*.png
+!docs/images/*.jpg
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.wmv
+
+# ===== YOLO WEIGHTS =====
+# YOLO model weights are large
+*.pt
+*.weights
+yolov*.pt
+yolov*.weights
+
+# Keep configuration files
+!yolo*.yaml
+!yolo*.cfg
+
+# ===== LOGS AND OUTPUTS =====
 *.log
-*.sqlite
+logs/
+training_logs/
+tensorboard_logs/
+wandb/
+
+# Training outputs
+training_results/
+checkpoints/
+saved_models/
+experiments/
+
+# ===== TEMPORARY FILES =====
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+*.lnk
+desktop.ini
+
+# ===== CACHE AND TEMPORARY =====
+# Cache directories
+.cache/
+__pycache__/
+.pyc
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.#*
+#*#
+
+# ===== CONFIGURATION =====
+# Local configuration that shouldn't be shared
+config_local.py
+.env.local
+secrets.json
+api_keys.txt
+
+# ===== DOCUMENTATION BUILD =====
+# Sphinx documentation
+docs/_build/
+
+# MkDocs documentation
+/site
+
+# ===== DATABASE =====
 *.db
+*.sqlite
+*.sqlite3
+
+# ===== MISC =====
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Qt artifacts (if using Qt for GUI)
+*.qmlc
+*.jsc
+
+# ===== PROJECT SPECIFIC =====
+# Specific to this alphabetic recognition project
+
+# Downloaded datasets
+downloads/
+data_downloads/
+
+# Feature extraction cache
+feature_cache/
+preprocessed_data/
+
+# Model evaluation results
+evaluation_results/
+confusion_matrices/
+classification_reports/
+
+# Temporary test files
+test_outputs/
+temp_images/
+debug_images/

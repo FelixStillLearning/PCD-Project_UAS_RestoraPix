@@ -67,6 +67,9 @@ CLASSIFICATION_CONFIG = get_classification_config()
 IMAGES_PATH = str(DATASET_PATH)
 ANNOTATIONS_PATH = str(DATASET_PATH / "annotations")
 
+# FNT Dataset path (for reorganized case-safe dataset)
+FNT_DATASET_PATH = str(Path("d:/Development/Proyek/Citra/Project_UAS/dataset/alphabets"))
+
 print(f"📋 Training Configuration:")
 print(f"  Dataset path: {DATASET_PATH}")
 print(f"  Model output: {MODEL_PATH}")
@@ -254,7 +257,7 @@ def extract_features_from_character(binary_char_image: np.ndarray) -> np.ndarray
             
             # Extent
             extent = char_area / bbox_area if bbox_area > 0 else 0
-              geometric_features = [aspect_ratio, area_ratio, perimeter_area_ratio, solidity, extent]
+            geometric_features = [aspect_ratio, area_ratio, perimeter_area_ratio, solidity, extent]
         else:
             geometric_features = [0, 0, 0, 0, 0]
         
@@ -360,26 +363,64 @@ def parse_pascal_voc_xml(xml_file: str) -> List[Dict]:
     return objects
 
 
-def load_dataset_from_folders() -> Tuple[np.ndarray, np.ndarray]:
+def load_dataset_from_folders(use_fnt_dataset: bool = False) -> Tuple[np.ndarray, np.ndarray]:
     """
     Load dataset dari folder structure (tanpa XML annotations).
-    Setiap folder (A/, B/, C/, etc.) berisi gambar untuk karakter tersebut.
+    Mendukung dua format:
+    1. Original format: folder A/, B/, C/, etc. 
+    2. FNT format: folder A_upper/, a_lower/, 0_digit/, etc. (case-safe)
+    
+    Parameters:
+    -----------
+    use_fnt_dataset : bool
+        True untuk menggunakan format FNT (case-safe), False untuk format original
     
     Returns:
     --------
-    Tuple[np.ndarray, np.ndarray]
-        (features, labels) - Features dan labels dalam format numpy array
+    Tuple[np.ndarray, np.ndarray]        (features, labels) - Features dan labels dalam format numpy array
     """
     features_list = []
     labels_list = []
     
     print("Loading dataset from folder structure...")
+    print("Supporting 62 character classes: 0-9, A-Z, a-z")
     
-    # List folder yang valid (A-Z, 0-9)
-    valid_folders = [chr(i) for i in range(ord('A'), ord('Z') + 1)] + [str(i) for i in range(10)]
+    if use_fnt_dataset:
+        # Format FNT dengan case-safe naming
+        valid_folders = (
+            [f"{i}_digit" for i in range(10)] +                    # 0_digit - 9_digit
+            [f"{chr(i)}_upper" for i in range(ord('A'), ord('Z') + 1)] +  # A_upper - Z_upper
+            [f"{chr(i)}_lower" for i in range(ord('a'), ord('z') + 1)]    # a_lower - z_lower
+        )
+        # Mapping dari folder name ke character label
+        folder_to_char = {}
+        for i in range(10):
+            folder_to_char[f"{i}_digit"] = str(i)
+        for i in range(ord('A'), ord('Z') + 1):
+            folder_to_char[f"{chr(i)}_upper"] = chr(i)
+        for i in range(ord('a'), ord('z') + 1):
+            folder_to_char[f"{chr(i)}_lower"] = chr(i)
+    else:
+        # Format original (A-Z, a-z, 0-9) - mendukung 62 karakter
+        valid_folders = (
+            [chr(i) for i in range(ord('A'), ord('Z') + 1)] +  # A-Z (uppercase)
+            [chr(i) for i in range(ord('a'), ord('z') + 1)] +  # a-z (lowercase)
+            [str(i) for i in range(10)]                        # 0-9 (digits)
+        )
+        # Mapping dari folder name ke character label (identity mapping)
+        folder_to_char = {folder: folder for folder in valid_folders}    
+    print(f"Supporting {len(valid_folders)} character classes")
+    if use_fnt_dataset:
+        print("Using FNT case-safe format (e.g., A_upper, a_lower, 0_digit)")
+        dataset_path = FNT_DATASET_PATH
+        print(f"Dataset path: {dataset_path}")
+    else:
+        print(f"Using original format: {valid_folders}")
+        dataset_path = IMAGES_PATH
+        print(f"Dataset path: {dataset_path}")
     
     for folder_name in valid_folders:
-        folder_path = os.path.join(IMAGES_PATH, folder_name)
+        folder_path = os.path.join(dataset_path, folder_name)
         
         if not os.path.exists(folder_path):
             print(f"Warning: Folder {folder_path} tidak ditemukan, skip...")
@@ -392,6 +433,9 @@ def load_dataset_from_folders() -> Tuple[np.ndarray, np.ndarray]:
             image_files.extend(glob.glob(os.path.join(folder_path, ext.upper())))
         
         print(f"Processing folder {folder_name}: {len(image_files)} images")
+        
+        # Get character label from folder name
+        char_label = folder_to_char[folder_name]
         
         for img_file in image_files:
             try:
@@ -408,7 +452,7 @@ def load_dataset_from_folders() -> Tuple[np.ndarray, np.ndarray]:
                 features = extract_features_from_character(preprocessed)
                 
                 features_list.append(features)
-                labels_list.append(folder_name)
+                labels_list.append(char_label)  # Use character label instead of folder name
                 
             except Exception as e:
                 print(f"Error processing {img_file}: {e}")
@@ -512,10 +556,15 @@ def load_dataset_with_annotations() -> Tuple[np.ndarray, np.ndarray]:
     return np.array(features_list), np.array(labels_list)
 
 
-def load_dataset_and_extract_features() -> Tuple[np.ndarray, np.ndarray]:
+def load_dataset_and_extract_features(use_fnt_dataset: bool = False) -> Tuple[np.ndarray, np.ndarray]:
     """
     Load dataset dan extract features.
     Akan mencoba XML annotations dulu, jika tidak ada akan gunakan folder structure.
+    
+    Parameters:
+    -----------
+    use_fnt_dataset : bool
+        True untuk menggunakan format FNT (case-safe), False untuk format original
     
     Returns:
     --------
@@ -530,25 +579,39 @@ def load_dataset_and_extract_features() -> Tuple[np.ndarray, np.ndarray]:
         return load_dataset_with_annotations()
     else:
         print("No XML annotations found, using folder structure...")
-        return load_dataset_from_folders()
+        return load_dataset_from_folders(use_fnt_dataset=use_fnt_dataset)
 
 
 # ==================== MAIN TRAINING SCRIPT ====================
 
-def main():
+def main(use_fnt_dataset: bool = True):
     """
     Main function untuk training alphabetic classifier.
+    
+    Parameters:
+    -----------
+    use_fnt_dataset : bool
+        True untuk menggunakan format FNT (case-safe), False untuk format original
     """
     import sys
     print("=" * 60)
     print("ALPHABETIC RECOGNITION - TRAINING SCRIPT")
     print("=" * 60)
+    
+    # Add dataset format information
+    if use_fnt_dataset:
+        print("📂 Dataset Format: FNT case-safe format")
+        print("   Expected folders: 0_digit, 1_digit, ..., A_upper, a_lower, etc.")
+    else:
+        print("📂 Dataset Format: Original format")
+        print("   Expected folders: A, B, C, ..., a, b, c, ..., 0, 1, 2, etc.")
+    
     sys.stdout.flush()
     
     # 1. Load dataset dan extract features
-    print("Loading dataset and extracting features...")
+    print("\nLoading dataset and extracting features...")
     sys.stdout.flush()
-    features, labels = load_dataset_and_extract_features()
+    features, labels = load_dataset_and_extract_features(use_fnt_dataset=use_fnt_dataset)
     
     if len(features) == 0:
         print("Error: No data loaded. Please check your dataset structure.")
@@ -682,4 +745,18 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    
+    # Setup command line arguments
+    parser = argparse.ArgumentParser(description='Train Alphabetic Character Recognition Model')
+    parser.add_argument('--use-fnt', action='store_true', default=True,
+                        help='Use FNT case-safe format (default: True)')
+    parser.add_argument('--use-original', action='store_true', 
+                        help='Use original format (A/, a/, etc.) - will override --use-fnt')
+    
+    args = parser.parse_args()
+    
+    # Determine which format to use
+    use_fnt_dataset = args.use_fnt and not args.use_original
+    
+    main(use_fnt_dataset=use_fnt_dataset)
