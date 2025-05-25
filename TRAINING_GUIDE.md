@@ -4,10 +4,13 @@
 Training script untuk klasifikasi karakter alfanumerik (A-Z, 0-9) menggunakan teknik Digital Image Processing (PCD) klasik dan Machine Learning klasik.
 
 ## Features
-- **Preprocessing**: Menggunakan modul PCD existing untuk grayscale conversion, filtering, binarization, dan morphological operations
-- **Feature Extraction**: Hu Moments, HOG, geometric features, projection features, zoning, dan crossing points
-- **Classification**: SVM dan Random Forest dengan automatic best model selection
+- **Centralized Configuration**: All parameters managed in `config.py` for consistency
+- **Enhanced Preprocessing**: Optimized pipeline using existing PCD modules
+- **Weighted Feature Extraction**: Hu Moments, HOG, geometric features, projection features, zoning, dan crossing points
+- **Advanced Classification**: SVM dan Random Forest dengan optimized parameters
 - **Dataset Support**: Folder structure atau XML annotations (PASCAL VOC format)
+- **Performance Optimization**: Batch processing dan caching mechanisms
+- **Comprehensive Testing**: Full test coverage dengan performance benchmarking
 
 ## Dataset Structure
 
@@ -208,7 +211,42 @@ model_data = {
 - Horizontal and vertical crossing point counts
 - Measures structural complexity
 
-**Total Feature Vector Size**: ~70-100 features (depending on HOG configuration)
+**Total Feature Vector Size**: ~360 features (optimized configuration)
+
+## Configuration Management
+
+The alphabetic recognition system uses centralized configuration management located in `modules/alphabetic_recognition/config.py`. This provides:
+
+### Key Configuration Features:
+- **Centralized Parameters**: All HOG, preprocessing, and model parameters in one place
+- **Optimized Settings**: Fine-tuned parameters for character recognition
+- **Validation Functions**: Automatic configuration validation
+- **Path Management**: Automatic directory creation and path resolution
+- **Backward Compatibility**: Support for existing imports and code
+
+### Configuration Sections:
+- **Image Processing**: Target size, filtering parameters, morphological operations
+- **Feature Extraction**: HOG parameters, feature weights, ensemble configuration
+- **Model Parameters**: SVM and Random Forest hyperparameters
+- **Performance Settings**: Batch size, multiprocessing, caching options
+
+### Accessing Configuration:
+```python
+from modules.alphabetic_recognition.config import (
+    get_preprocessing_config,
+    get_feature_extraction_config, 
+    get_classification_config,
+    validate_config
+)
+
+# Load configurations
+preprocessing_config = get_preprocessing_config()
+feature_config = get_feature_extraction_config()
+model_config = get_classification_config()
+
+# Validate all configurations
+validate_config()
+```
 
 ## Integration with Existing System
 

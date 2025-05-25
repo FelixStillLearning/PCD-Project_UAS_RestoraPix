@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Alphabetic Recognition Training Script
-=====================================
+Enhanced Alphabetic Recognition Training Script
+==============================================
 
-Skrip untuk ekstraksi fitur dan pelatihan model klasifikasi karakter alfanumerik
-menggunakan teknik Pengolahan Citra Digital (PCD) klasik dan Machine Learning klasik.
+Training script for alphabetic character classification using centralized configuration
+and optimized parameters for better performance and maintainability.
 
-Author: [Your Name]
+Author: Enhanced for Project UAS
 Date: May 2025
 """
 
@@ -14,15 +14,29 @@ import cv2
 import numpy as np
 import os
 import xml.etree.ElementTree as ET
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import joblib
 import glob
-from typing import Tuple, List, Dict, Union
+from typing import Tuple, List, Dict, Union, Optional
+import warnings
+from pathlib import Path
 
-# Import modul PCD yang sudah ada
+# Import centralized configuration
+from modules.alphabetic_recognition.config import (
+    MODEL_PATH, FEATURE_CONFIG_PATH, DATASET_PATH, CHAR_IMAGE_SIZE,
+    HOG_PARAMS, FEATURE_WEIGHTS, SVM_C_PARAM, SVM_GAMMA,
+    RF_N_ESTIMATORS, RF_MAX_DEPTH, RF_MIN_SAMPLES_SPLIT, RF_MIN_SAMPLES_LEAF,
+    CV_FOLDS, RANDOM_STATE, GAUSSIAN_KERNEL_SIZE, GAUSSIAN_SIGMA_X,
+    MEDIAN_FILTER_SIZE, THRESHOLD_TYPE, THRESHOLD_MAX_VALUE,
+    MORPH_OPEN_KERNEL, MORPH_CLOSE_KERNEL, MORPH_ITERATIONS,
+    get_preprocessing_config, get_feature_extraction_config,
+    get_classification_config, validate_config
+)
+
+# Import existing PCD modules with fallbacks
 try:
     from modules.color_processing.color_processor import to_grayscale
     from modules.filtering.filters import gaussian_filter, median_filter
@@ -30,84 +44,122 @@ try:
     from modules.segmentation.thresholding import otsu_threshold, adaptive_threshold
     from modules.transformation.geometric import resize_image
     print("✓ PCD modules imported successfully")
+    USE_PCD_MODULES = True
 except ImportError as e:
     print(f"⚠ Warning: Could not import some PCD modules: {e}")
     print("  Script will use OpenCV fallbacks where necessary")
+    USE_PCD_MODULES = False
 
+# Validate configuration on startup
+print("🔧 Validating configuration...")
+try:
+    validate_config()
+    print("✓ Configuration validation passed")
+except Exception as e:
+    warnings.warn(f"Configuration validation warning: {e}", UserWarning)
 
-# ==================== DEFINISI PATH ====================
-DATASET_PATH = "dataset/alphabets"
-IMAGES_PATH = os.path.join(DATASET_PATH)
-ANNOTATIONS_PATH = os.path.join(DATASET_PATH, "annotations")
-MODEL_PATH = "models/alphabetic_classifier_model.pkl"
-FEATURE_EXTRACTOR_PATH = "models/feature_extractor_config.pkl"
+# Load configuration dictionaries
+PREPROCESSING_CONFIG = get_preprocessing_config()
+FEATURE_CONFIG = get_feature_extraction_config()
+CLASSIFICATION_CONFIG = get_classification_config()
 
-# Target ukuran untuk normalisasi karakter
-TARGET_SIZE = (28, 28)
+# Define additional paths for backward compatibility
+IMAGES_PATH = str(DATASET_PATH)
+ANNOTATIONS_PATH = str(DATASET_PATH / "annotations")
 
-# ==================== PREPROCESSING FUNCTIONS ====================
+print(f"📋 Training Configuration:")
+print(f"  Dataset path: {DATASET_PATH}")
+print(f"  Model output: {MODEL_PATH}")
+print(f"  Image size: {CHAR_IMAGE_SIZE}")
+print(f"  Feature weights: {FEATURE_WEIGHTS}")
+print(f"  SVM params: C={SVM_C_PARAM}, gamma={SVM_GAMMA}")
+print(f"  RF params: trees={RF_N_ESTIMATORS}, depth={RF_MAX_DEPTH}")
 
-def preprocess_character_image(image_roi: np.ndarray) -> np.ndarray:
+# ==================== ENHANCED PREPROCESSING FUNCTIONS ====================
+
+def preprocess_character_image(image_roi: np.ndarray, 
+                              target_size: Optional[Tuple[int, int]] = None) -> np.ndarray:
     """
-    Preprocess ROI karakter untuk ekstraksi fitur.
+    Enhanced character preprocessing using centralized configuration.
     
     Parameters:
     -----------
     image_roi : np.ndarray
-        ROI dari gambar karakter yang sudah tersegmen
+        ROI from segmented character image
+    target_size : Optional[Tuple[int, int]]
+        Target size for normalization (uses config default if None)
         
     Returns:
     --------
     np.ndarray
-        Gambar biner karakter yang sudah bersih dan dinormalisasi ukurannya
+        Clean, normalized binary character image
     """
+    if target_size is None:
+        target_size = CHAR_IMAGE_SIZE
+    
     try:
-        # 1. Konversi ke grayscale menggunakan modul yang sudah ada
+        # 1. Convert to grayscale using existing modules or fallback
         if len(image_roi.shape) == 3:
-            try:
-                gray_image = to_grayscale(image_roi)
-            except:
+            if USE_PCD_MODULES:
+                try:
+                    gray_image = to_grayscale(image_roi)
+                except:
+                    gray_image = cv2.cvtColor(image_roi, cv2.COLOR_BGR2GRAY)
+            else:
                 gray_image = cv2.cvtColor(image_roi, cv2.COLOR_BGR2GRAY)
         else:
             gray_image = image_roi.copy()
         
-        # 2. Noise reduction menggunakan Gaussian blur
-        try:
-            denoised = gaussian_filter(gray_image, filter_size=3)
-        except:
-            denoised = cv2.GaussianBlur(gray_image, (3, 3), 1.0)
+        # 2. Enhanced noise reduction using configuration
+        if USE_PCD_MODULES:
+            try:
+                denoised = gaussian_filter(gray_image, filter_size=GAUSSIAN_KERNEL_SIZE[0])
+            except:
+                denoised = cv2.GaussianBlur(gray_image, GAUSSIAN_KERNEL_SIZE, GAUSSIAN_SIGMA_X)
+        else:
+            denoised = cv2.GaussianBlur(gray_image, GAUSSIAN_KERNEL_SIZE, GAUSSIAN_SIGMA_X)
         
-        # 3. Median filter untuk menghilangkan salt-and-pepper noise
-        try:
-            denoised = median_filter(denoised, filter_size=3)
-        except:
-            denoised = cv2.medianBlur(denoised, 3)
+        # 3. Median filter for salt-and-pepper noise
+        if USE_PCD_MODULES:
+            try:
+                denoised = median_filter(denoised, filter_size=MEDIAN_FILTER_SIZE)
+            except:
+                denoised = cv2.medianBlur(denoised, MEDIAN_FILTER_SIZE)
+        else:
+            denoised = cv2.medianBlur(denoised, MEDIAN_FILTER_SIZE)
         
-        # 4. Binarization menggunakan Otsu thresholding
-        try:
-            _, binary_image = otsu_threshold(denoised)
-        except:
-            _, binary_image = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        # 4. Enhanced binarization using configuration
+        if USE_PCD_MODULES:
+            try:
+                _, binary_image = otsu_threshold(denoised)
+            except:
+                _, binary_image = cv2.threshold(denoised, 0, THRESHOLD_MAX_VALUE, THRESHOLD_TYPE)
+        else:
+            _, binary_image = cv2.threshold(denoised, 0, THRESHOLD_MAX_VALUE, THRESHOLD_TYPE)
         
-        # 5. Morphological operations untuk pembersihan
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-        try:
-            # Opening untuk menghilangkan noise kecil
-            cleaned = opening(binary_image, kernel)
-            # Closing untuk mengisi lubang kecil
-            cleaned = closing(cleaned, kernel)
-        except:
-            cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, kernel)
-            cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, kernel)
+        # 5. Morphological operations using configured kernels
+        if USE_PCD_MODULES:
+            try:
+                # Opening to remove small noise
+                cleaned = opening(binary_image, MORPH_OPEN_KERNEL)
+                # Closing to fill small holes
+                cleaned = closing(cleaned, MORPH_CLOSE_KERNEL)
+            except:
+                cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, MORPH_OPEN_KERNEL, iterations=MORPH_ITERATIONS)
+                cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, MORPH_CLOSE_KERNEL, iterations=MORPH_ITERATIONS)
+        else:
+            cleaned = cv2.morphologyEx(binary_image, cv2.MORPH_OPEN, MORPH_OPEN_KERNEL, iterations=MORPH_ITERATIONS)
+            cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, MORPH_CLOSE_KERNEL, iterations=MORPH_ITERATIONS)
+          # 6. Resize to target size
+        if USE_PCD_MODULES:
+            try:
+                normalized = resize_image(cleaned, target_size)
+            except:
+                normalized = cv2.resize(cleaned, target_size, interpolation=cv2.INTER_AREA)
+        else:
+            normalized = cv2.resize(cleaned, target_size, interpolation=cv2.INTER_AREA)
         
-        # 6. Normalisasi ukuran ke TARGET_SIZE
-        try:
-            normalized = resize_image(cleaned, TARGET_SIZE)
-        except:
-            normalized = cv2.resize(cleaned, TARGET_SIZE, interpolation=cv2.INTER_AREA)
-        
-        # 7. Pastikan background hitam (0) dan foreground putih (255)
-        # Jika lebih banyak pixel putih, invert
+        # 7. Ensure proper orientation (black background, white foreground)
         white_pixels = np.count_nonzero(normalized == 255)
         total_pixels = normalized.shape[0] * normalized.shape[1]
         
@@ -118,7 +170,7 @@ def preprocess_character_image(image_roi: np.ndarray) -> np.ndarray:
         
     except Exception as e:
         print(f"Error in preprocess_character_image: {e}")
-        # Return default processed image using OpenCV only
+        # Fallback preprocessing using OpenCV only
         if len(image_roi.shape) == 3:
             gray = cv2.cvtColor(image_roi, cv2.COLOR_BGR2GRAY)
         else:
@@ -129,128 +181,139 @@ def preprocess_character_image(image_roi: np.ndarray) -> np.ndarray:
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
         cleaned = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel)
         cleaned = cv2.morphologyEx(cleaned, cv2.MORPH_CLOSE, kernel)
-        normalized = cv2.resize(cleaned, TARGET_SIZE, interpolation=cv2.INTER_AREA)
+        normalized = cv2.resize(cleaned, target_size, interpolation=cv2.INTER_AREA)
         
         return normalized
 
 
 def extract_features_from_character(binary_char_image: np.ndarray) -> np.ndarray:
     """
-    Ekstrak fitur dari gambar biner karakter yang sudah dinormalisasi.
+    Enhanced feature extraction using centralized configuration and weighted features.
     
     Parameters:
     -----------
     binary_char_image : np.ndarray
-        Gambar biner karakter yang sudah dinormalisasi (28x28)
+        Normalized binary character image
         
     Returns:
     --------
     np.ndarray
-        Vektor fitur NumPy
+        Weighted feature vector
     """
     features = []
     
     try:
-        # 1. Hu Moments - Sangat penting untuk bentuk karakter
+        # 1. Enhanced Hu Moments with weighting
         moments = cv2.moments(binary_char_image)
         hu_moments = cv2.HuMoments(moments)
-        # Log transform untuk stabilitas numerik
         hu_moments = -np.sign(hu_moments) * np.log10(np.abs(hu_moments) + 1e-10)
-        features.extend(hu_moments.flatten())
+        weighted_hu = hu_moments.flatten() * FEATURE_WEIGHTS['hu_moments']
+        features.extend(weighted_hu)
         
-        # 2. HOG Features - Histogram of Oriented Gradients
-        # Konfigurasi HOG untuk karakter kecil
-        hog = cv2.HOGDescriptor(
-            _winSize=(28, 28),
-            _blockSize=(14, 14),
-            _blockStride=(7, 7),
-            _cellSize=(7, 7),
-            _nbins=9
-        )
+        # 2. Enhanced HOG Features using optimized parameters
+        hog = cv2.HOGDescriptor(**HOG_PARAMS)
         hog_features = hog.compute(binary_char_image)
-        features.extend(hog_features.flatten())
+        if hog_features is not None:
+            weighted_hog = hog_features.flatten() * FEATURE_WEIGHTS['hog']
+            features.extend(weighted_hog)
+        else:
+            # Fallback HOG with default parameters
+            hog_fallback = cv2.HOGDescriptor(
+                _winSize=CHAR_IMAGE_SIZE,
+                _blockSize=(14, 14),
+                _blockStride=(7, 7),
+                _cellSize=(7, 7),
+                _nbins=9
+            )
+            hog_features = hog_fallback.compute(binary_char_image)
+            weighted_hog = hog_features.flatten() * FEATURE_WEIGHTS['hog']
+            features.extend(weighted_hog)
         
-        # 3. Fitur Geometris
-        # Aspect ratio
+        # 3. Enhanced Geometric Features with weighting
         contours, _ = cv2.findContours(binary_char_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if contours:
             largest_contour = max(contours, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(largest_contour)
-            aspect_ratio = float(w) / h if h > 0 else 0
-            features.append(aspect_ratio)
             
-            # Area ratio (area karakter / area bounding box)
+            # Aspect ratio
+            aspect_ratio = float(w) / h if h > 0 else 0
+            
+            # Area ratios
             char_area = cv2.contourArea(largest_contour)
             bbox_area = w * h
             area_ratio = char_area / bbox_area if bbox_area > 0 else 0
-            features.append(area_ratio)
             
-            # Perimeter to area ratio
+            # Perimeter area ratio
             perimeter = cv2.arcLength(largest_contour, True)
             perimeter_area_ratio = perimeter / char_area if char_area > 0 else 0
-            features.append(perimeter_area_ratio)
             
-            # Solidity (area / convex hull area)
+            # Solidity
             hull = cv2.convexHull(largest_contour)
             hull_area = cv2.contourArea(hull)
             solidity = char_area / hull_area if hull_area > 0 else 0
-            features.append(solidity)
             
-            # Extent (area / bounding box area)
+            # Extent
             extent = char_area / bbox_area if bbox_area > 0 else 0
-            features.append(extent)
+              geometric_features = [aspect_ratio, area_ratio, perimeter_area_ratio, solidity, extent]
         else:
-            # Jika tidak ada contour, berikan nilai default
-            features.extend([0, 0, 0, 0, 0])
+            geometric_features = [0, 0, 0, 0, 0]
         
-        # 4. Fitur Proyeksi - Horizontal dan Vertical Projection
-        h_projection = np.sum(binary_char_image, axis=1)  # Horizontal projection
-        v_projection = np.sum(binary_char_image, axis=0)  # Vertical projection
+        weighted_geometric = np.array(geometric_features) * FEATURE_WEIGHTS['geometric']
+        features.extend(weighted_geometric)
         
-        # Statistik proyeksi
-        features.extend([
+        # 4. Enhanced Projection Features with weighting
+        h_projection = np.sum(binary_char_image, axis=1)
+        v_projection = np.sum(binary_char_image, axis=0)
+        
+        projection_features = [
             np.mean(h_projection), np.std(h_projection), np.max(h_projection),
             np.mean(v_projection), np.std(v_projection), np.max(v_projection)
-        ])
+        ]
+        weighted_projection = np.array(projection_features) * FEATURE_WEIGHTS['projection']
+        features.extend(weighted_projection)
         
-        # 5. Zoning Features - Bagi image menjadi 4x4 zona
-        zones = []
+        # 5. Enhanced Zoning Features with weighting
         zone_h, zone_w = binary_char_image.shape[0] // 4, binary_char_image.shape[1] // 4
+        zoning_features = []
         for i in range(4):
             for j in range(4):
                 zone = binary_char_image[i*zone_h:(i+1)*zone_h, j*zone_w:(j+1)*zone_w]
-                zone_density = np.sum(zone) / (zone_h * zone_w * 255)  # Normalize
-                zones.append(zone_density)
-        features.extend(zones)
+                zone_density = np.sum(zone) / (zone_h * zone_w * 255) if zone.size > 0 else 0
+                zoning_features.append(zone_density)
         
-        # 6. Crossing Features - Hitung crossing points
-        # Horizontal crossings
+        weighted_zoning = np.array(zoning_features) * FEATURE_WEIGHTS['zoning']
+        features.extend(weighted_zoning)
+        
+        # 6. Enhanced Crossing Features with weighting
         h_crossings = 0
         for row in binary_char_image:
-            crossings = 0
             for i in range(len(row) - 1):
                 if row[i] != row[i + 1]:
-                    crossings += 1
-            h_crossings += crossings
+                    h_crossings += 1
         
-        # Vertical crossings
         v_crossings = 0
         for col in range(binary_char_image.shape[1]):
             column = binary_char_image[:, col]
-            crossings = 0
             for i in range(len(column) - 1):
                 if column[i] != column[i + 1]:
-                    crossings += 1
-            v_crossings += crossings
+                    v_crossings += 1
         
-        features.extend([h_crossings, v_crossings])
+        crossing_features = [h_crossings, v_crossings]
+        weighted_crossing = np.array(crossing_features) * FEATURE_WEIGHTS['crossing']
+        features.extend(weighted_crossing)
         
-        return np.array(features, dtype=np.float32)
+        # Validate and clean feature vector
+        feature_vector = np.array(features, dtype=np.float32)
+        if np.any(np.isnan(feature_vector)) or np.any(np.isinf(feature_vector)):
+            print("Warning: NaN or Inf values detected in features, applying correction")
+            feature_vector = np.nan_to_num(feature_vector, nan=0.0, posinf=1.0, neginf=-1.0)
+        
+        return feature_vector
         
     except Exception as e:
         print(f"Error in extract_features_from_character: {e}")
         # Return default feature vector
-        return np.zeros(100, dtype=np.float32)  # Adjust size as needed
+        return np.zeros(100, dtype=np.float32)  # Default size
 
 
 def parse_pascal_voc_xml(xml_file: str) -> List[Dict]:
@@ -575,11 +638,10 @@ def main():
     
     print(f"\nConfusion Matrix:")
     print(confusion_matrix(y_test, best_predictions))
-    
-    # 5. Save model
+      # 5. Save model
     print(f"\nSaving model...")
     
-    # Buat folder models jika belum ada
+    # Create models directory if it doesn't exist
     os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
     
     # Save model
@@ -590,7 +652,7 @@ def main():
         'feature_size': features.shape[1],
         'classes': np.unique(labels).tolist(),
         'preprocessing_config': {
-            'target_size': TARGET_SIZE,
+            'target_size': CHAR_IMAGE_SIZE,
             'use_otsu': True,
             'use_morphology': True
         }
@@ -599,15 +661,17 @@ def main():
     joblib.dump(model_data, MODEL_PATH)
     print(f"Model saved to: {MODEL_PATH}")
     
-    # 6. Simpan juga konfigurasi feature extractor
+    # 6. Save feature extractor configuration
     feature_config = {
-        'target_size': TARGET_SIZE,
+        'target_size': CHAR_IMAGE_SIZE,
         'feature_types': ['hu_moments', 'hog', 'geometric', 'projection', 'zoning', 'crossing'],
-        'feature_size': features.shape[1]
+        'feature_size': features.shape[1],
+        'feature_weights': FEATURE_WEIGHTS,
+        'hog_params': HOG_PARAMS
     }
     
-    joblib.dump(feature_config, FEATURE_EXTRACTOR_PATH)
-    print(f"Feature extractor config saved to: {FEATURE_EXTRACTOR_PATH}")
+    joblib.dump(feature_config, FEATURE_CONFIG_PATH)
+    print(f"Feature extractor config saved to: {FEATURE_CONFIG_PATH}")
     
     print(f"\n" + "=" * 60)
     print("TRAINING COMPLETED SUCCESSFULLY!")
