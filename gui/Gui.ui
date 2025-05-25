@@ -806,13 +806,37 @@ QMenu::item:selected {
      </property>
      <property name="title">
       <string>Deteksi Objek ; YOLO</string>
-     </property>
-     <addaction name="actionDeteksi_Objek_Gambar"/>
+     </property>     <addaction name="actionDeteksi_Objek_Gambar"/>
      <addaction name="actionDeteksi_Objek_Video"/>
      <addaction name="actionDeteksi_Objek_Camera"/>
     </widget>
+    <widget class="QMenu" name="menuAlphabetic_Recognition">
+     <property name="styleSheet">
+      <string notr="true">QMenu {
+    background-color: rgb(50, 54, 62);
+    color: white;
+    border: 1px solid rgb(60, 63, 65);
+    border-radius: 4px;
+    padding: 5px;
+}
+QMenu::item {
+    padding: 5px 25px 5px 20px;
+    border-radius: 3px;
+}
+QMenu::item:selected {
+    background-color: rgb(61, 174, 233);
+}</string>
+     </property>
+     <property name="title">
+      <string>Alphabetic Recognition</string>
+     </property>
+     <addaction name="actionAlphabetic_Recognition_Image"/>
+     <addaction name="actionAlphabetic_Recognition_Camera"/>
+     <addaction name="actionAlphabetic_Recognition_Video"/>
+    </widget>
     <addaction name="menuColor_Processing"/>
     <addaction name="menuDeteksi_Objek"/>
+    <addaction name="menuAlphabetic_Recognition"/>
    </widget>
    <addaction name="menuDasar"/>
    <addaction name="menuTransformasi"/>
@@ -1329,10 +1353,33 @@ QToolButton:pressed {
    <property name="text">
     <string>Color Tracking</string>
    </property>
-  </action>
-  <action name="actionColor_Picker">
+  </action>  <action name="actionColor_Picker">
    <property name="text">
     <string>Color Picker</string>
+   </property>
+  </action>
+  <action name="actionAlphabetic_Recognition_Image">
+   <property name="text">
+    <string>Alphabetic Recognition : Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Apply alphabetic recognition to static images</string>
+   </property>
+  </action>
+  <action name="actionAlphabetic_Recognition_Camera">
+   <property name="text">
+    <string>Alphabetic Recognition : Camera</string>
+   </property>
+   <property name="toolTip">
+    <string>Apply alphabetic recognition to live camera feed</string>
+   </property>
+  </action>
+  <action name="actionAlphabetic_Recognition_Video">
+   <property name="text">
+    <string>Alphabetic Recognition : Video</string>
+   </property>
+   <property name="toolTip">
+    <string>Apply alphabetic recognition to video files</string>
    </property>
   </action>
  </widget>
