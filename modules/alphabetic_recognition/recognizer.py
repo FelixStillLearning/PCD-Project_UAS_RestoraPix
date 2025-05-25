@@ -296,23 +296,94 @@ class AlphabeticRecognizer:
         
         return results
     
-    def get_model_info(self) -> dict:
+    def process_image(self, image: np.ndarray) -> Tuple[np.ndarray, List[dict]]:
         """
-        Get informasi tentang model yang di-load.
+        Process an image to detect and recognize characters.
         
+        Args:
+            image: Input image (BGR format)
+            
         Returns:
-            Dictionary berisi informasi model
+            Tuple of (processed_image_with_bboxes, detections_list)
+            where detections_list contains dictionaries with 'character' and 'confidence' keys
         """
-        if not self.is_loaded:
-            return {}
-        
-        return {
-            'model_type': self.model_data.get('model_type', 'Unknown'),
-            'accuracy': self.model_data.get('accuracy', 0.0),
-            'classes': self.classes,
-            'feature_size': self.feature_size,
-            'total_classes': len(self.classes) if self.classes else 0
-        }
+        try:
+            # Convert to grayscale for contour detection
+            if len(image.shape) == 3:
+                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            else:
+                gray = image.copy()
+            
+            # Apply threshold to get binary image
+            _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+            
+            # Find contours
+            contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            
+            # Filter contours by area and aspect ratio
+            valid_contours = []
+            min_area = 100
+            max_area = image.shape[0] * image.shape[1] * 0.5
+            
+            for contour in contours:
+                area = cv2.contourArea(contour)
+                if min_area < area < max_area:
+                    x, y, w, h = cv2.boundingRect(contour)
+                    aspect_ratio = float(w) / h
+                    if 0.2 < aspect_ratio < 5.0:  # Filter reasonable aspect ratios
+                        valid_contours.append((x, y, w, h))
+            
+            # Sort contours from left to right, top to bottom
+            valid_contours = sorted(valid_contours, key=lambda b: (b[1] // 50, b[0]))
+            
+            # Create copy of original image for drawing
+            result_image = image.copy()
+            detections = []
+            
+            # Process each valid contour
+            for i, (x, y, w, h) in enumerate(valid_contours):
+                # Extract ROI
+                roi = image[y:y+h, x:x+w]
+                
+                # Predict character
+                char, confidence = self.predict_character(roi)
+                
+                # Add to detections list with proper format
+                detections.append({
+                    'character': char,
+                    'confidence': confidence,
+                    'bbox': (x, y, w, h)
+                })
+                
+                # Draw bounding box and label on result image
+                cv2.rectangle(result_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                
+                # Draw character label with confidence
+                label = f"{char} ({confidence:.2f})"
+                font_scale = 0.6
+                thickness = 1
+                
+                # Get text size to position label properly
+                (text_width, text_height), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
+                
+                # Position label above bounding box
+                label_y = y - 10 if y - 10 > text_height else y + h + text_height + 10
+                
+                # Draw background rectangle for label
+                cv2.rectangle(result_image, 
+                            (x, label_y - text_height - 5), 
+                            (x + text_width + 10, label_y + 5), 
+                            (0, 255, 0), -1)
+                
+                # Draw text
+                cv2.putText(result_image, label, (x + 5, label_y), 
+                          cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 0), thickness)
+            
+            return result_image, detections
+            
+        except Exception as e:
+            print(f"Error in process_image: {e}")
+            return image.copy(), []
 
 # Global instance untuk digunakan dalam aplikasi
 _recognizer_instance = None

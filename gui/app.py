@@ -80,6 +80,18 @@ from modules.restoration.operations import (
     inpainting, deblurring, old_photo_restoration
 )
 
+
+
+# Import alphabetic recognition module
+try:
+    from modules.alphabetic_recognition.recognizer import (
+        AlphabeticRecognizer, predict_character, predict_characters
+    )
+    ALPHABETIC_RECOGNITION_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: Alphabetic recognition module not available: {e}")
+    ALPHABETIC_RECOGNITION_AVAILABLE = False
+
 # Import object detection module
 from modules.object_detection.detector import (
     detect_objects, detect_objects_from_camera, detect_objects_from_video
@@ -207,6 +219,14 @@ class ImageProcessingApp(QMainWindow):
         self.actionDeteksi_Objek_Gambar.triggered.connect(self.apply_object_detection_image)
         self.actionDeteksi_Objek_Camera.triggered.connect(self.apply_object_detection_camera)
         self.actionDeteksi_Objek_Video.triggered.connect(self.apply_object_detection_video)
+        
+        # Alphabetic recognition
+        if hasattr(self, 'actionAlphabetic_Recognition_Image'):
+            self.actionAlphabetic_Recognition_Image.triggered.connect(self.apply_alphabetic_recognition_image)
+        if hasattr(self, 'actionAlphabetic_Recognition_Camera'):
+            self.actionAlphabetic_Recognition_Camera.triggered.connect(self.apply_alphabetic_recognition_camera)
+        if hasattr(self, 'actionAlphabetic_Recognition_Video'):
+            self.actionAlphabetic_Recognition_Video.triggered.connect(self.apply_alphabetic_recognition_video)
 
     
     def load_image(self):
@@ -1949,6 +1969,128 @@ class ImageProcessingApp(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error during object detection: {str(e)}")
     
+    # Alphabetic Recognition methods
+    def apply_alphabetic_recognition_image(self):
+        """Apply alphabetic recognition to the current image"""
+        image = self.processor.get_image()
+        if image is None:
+            return
+        
+        try:
+            # Apply alphabetic recognition processing
+            processed_image, detections = self.processor.process_for_alphabetic_recognition()
+            
+            # Update display with processed image (with bounding boxes)
+            self.display_image(processed_image, self.imglabelgray)
+            
+            # Show results in a message box if detections were found
+            if detections:
+                result_text = "Detected Characters:\n"
+                for detection in detections:
+                    char = detection['character']
+                    confidence = detection['confidence']
+                    result_text += f"'{char}' (confidence: {confidence:.2f})\n"
+                
+                QtWidgets.QMessageBox.information(self, "Recognition Results", result_text)
+            else:
+                QtWidgets.QMessageBox.information(self, "Recognition Results", "No characters detected in the image.")
+                
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Error", f"Alphabetic recognition failed: {str(e)}")
+    
+    def apply_alphabetic_recognition_camera(self):
+        """Apply alphabetic recognition to live camera feed"""
+        try:
+            import cv2
+            from modules.alphabetic_recognition.recognizer import AlphabeticRecognizer
+            
+            # Initialize recognizer
+            recognizer = AlphabeticRecognizer()
+            
+            # Initialize camera
+            cap = cv2.VideoCapture(0)
+            if not cap.isOpened():
+                QtWidgets.QMessageBox.critical(self, "Error", "Could not open camera")
+                return
+            
+            QtWidgets.QMessageBox.information(self, "Camera Mode", "Camera started. Press 'q' in the camera window to quit.")
+            
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    break
+                
+                # Process frame for alphabetic recognition
+                processed_frame, detections = recognizer.process_image(frame)
+                
+                # Display the processed frame
+                cv2.imshow('Alphabetic Recognition - Live Camera', processed_frame)
+                
+                # Break on 'q' key press
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            
+            # Clean up
+            cap.release()
+            cv2.destroyAllWindows()
+            
+        except ImportError:
+            QtWidgets.QMessageBox.critical(self, "Error", "Alphabetic recognition module not available")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Error", f"Camera processing failed: {str(e)}")
+    
+    def apply_alphabetic_recognition_video(self):
+        """Apply alphabetic recognition to a video file"""
+        try:
+            # Get video file path
+            file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self, 
+                "Select Video File", 
+                "", 
+                "Video Files (*.mp4 *.avi *.mov *.mkv *.wmv);;All Files (*)"
+            )
+            
+            if not file_path:
+                return
+            
+            import cv2
+            from modules.alphabetic_recognition.recognizer import AlphabeticRecognizer
+            
+            # Initialize recognizer
+            recognizer = AlphabeticRecognizer()
+            
+            # Open video file
+            cap = cv2.VideoCapture(file_path)
+            if not cap.isOpened():
+                QtWidgets.QMessageBox.critical(self, "Error", "Could not open video file")
+                return
+            
+            QtWidgets.QMessageBox.information(self, "Video Mode", "Video processing started. Press 'q' in the video window to quit.")
+            
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    break
+                
+                # Process frame for alphabetic recognition
+                processed_frame, detections = recognizer.process_image(frame)
+                
+                # Display the processed frame
+                cv2.imshow('Alphabetic Recognition - Video', processed_frame)
+                
+                # Break on 'q' key press
+                if cv2.waitKey(30) & 0xFF == ord('q'):  # 30ms delay for video playback
+                    break
+            
+            # Clean up
+            cap.release()
+            cv2.destroyAllWindows()
+            
+        except ImportError:
+            QtWidgets.QMessageBox.critical(self, "Error", "Alphabetic recognition module not available")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Error", f"Video processing failed: {str(e)}")
+
     # Color Processing methods
     def apply_color_picker(self):
         """Apply color picker tool to identify HSV color values"""

@@ -4,8 +4,6 @@ Module untuk pengenalan karakter alfanumerik menggunakan
 teknik Pengolahan Citra Digital (PCD) klasik dan Machine Learning klasik.
 """
 
-from .feature_extractor import FeatureExtractor
-from .character_classifier import CharacterClassifier
-from .dataset_manager import DatasetManager
+from .recognizer import AlphabeticRecognizer
 
-__all__ = ['FeatureExtractor', 'CharacterClassifier', 'DatasetManager']
+__all__ = ['AlphabeticRecognizer']
