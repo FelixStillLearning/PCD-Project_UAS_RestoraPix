@@ -10,3 +10,6 @@ PyQt5-sip
 pandas
 openpyxl
 ultralytics
+scikit-learn
+joblib
+imutils
